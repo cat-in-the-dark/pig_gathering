@@ -25,7 +25,7 @@ class OneShot {
  public:
   OneShot(float time);
 
-  bool IsPassed() const;
+  bool IsPassed();
   void Update(float dt);
   void Reset();
 };
@@ -57,7 +57,7 @@ void Timer::Reset() { elapsed = 0; }
 float Timer::Elapsed() const { return elapsed; }
 
 OneShot::OneShot(float time) : time(time), elapsed(0.0f) {}
-bool OneShot::IsPassed() const {
+bool OneShot::IsPassed() {
   if (passed) {
     return false;
   }
