@@ -52,11 +52,10 @@ void Pig::Update(float dt) {
   if (isKicked_) {
     if (elevation >= 0.0f) {
       std::cout << elevation << std::endl;
-      elevation += elevationSpeed_ * dt;
+      elevation = std::max(0.0f, elevation + elevationSpeed_ * dt);
       elevationSpeed_ -= gravityAcceleration * dt;
     } else {
       elevationSpeed_ = 0.0f;
-      elevation = 0.0f;
       isKicked_ = false;
     }
   }

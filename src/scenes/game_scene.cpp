@@ -23,13 +23,13 @@ GameScene::~GameScene() {
   UnloadTexture(grass);
 }
 
-std::vector<Pig> spawnPigs() {
-  std::vector<Pig> result{};
+auto spawnPigs() {
+  std::vector<std::unique_ptr<Pig>> result{};
   // simple uniform distribution
   for (auto i = 0; i < balance::kPigsCount; i++) {
-    result.push_back(Pig{
-        {static_cast<float>(GetRandomValue(kWorldPosLeft + Pig::pigWitdh / 2, kWorldPosRight - Pig::pigWitdh / 2)),
-         static_cast<float>(GetRandomValue(kWorldPosUp + Pig::pigHeight / 2, kWorldPosDown - Pig::pigHeight / 2))}});
+    result.push_back(std::make_unique<Pig>(hlam::Vec2{
+        static_cast<float>(GetRandomValue(kWorldPosLeft + Pig::pigWitdh / 2, kWorldPosRight - Pig::pigWitdh / 2)),
+        static_cast<float>(GetRandomValue(kWorldPosUp + Pig::pigHeight / 2, kWorldPosDown - Pig::pigHeight / 2))}));
   }
 
   return result;
@@ -58,32 +58,57 @@ void GameScene::Update(float dt) {
     sm->Change("results");
   }
 
-  std::sort(pigs.begin(), pigs.end(), [](auto& p1, auto& p2) {
-    auto el1 = p1.elevation;
-    auto el2 = p2.elevation;
-
-    if (el1 < 0) {
-      el1 = 0.0f;
-    }
-
-    if (el2 < 0) {
-      el2 = 0.0f;
-    }
-
-    return el1 < el2;
-  });
+  std::sort(pigs.begin(), pigs.end(), [](auto& p1, auto& p2) { return p1->elevation < p2->elevation; });
+  std::sort(players.begin(), players.end(),
+            [](const auto& p1, const auto& p2) { return p1->IsDashing() && !p2->IsDashing(); });
 
   for (auto& player : players) {
+    for (auto& player1 : players) {
+      if (player1 == player) {
+        continue;
+      }
+
+      if (CheckCollisionCircles(player1->pos, Player::physSize.x / 2, player->pos, Player::physSize.x / 2)) {
+        auto diff = player1->pos - player->pos;
+        player1->pos = player->pos + hlam::vec_norm(diff) * Player::physSize.x;
+      }
+    }
+
     for (auto& pig : pigs) {
-      pig.Update(dt);
-      if (CheckCollisionCircles(pig.pos, pig.width / 2, player->pos, Player::physSize.x / 2)) {
-        auto diff = pig.pos - player->pos;
+      pig->Update(dt);
+      if (pig->elevation > 0) {
+        continue;
+      }
+
+      if (CheckCollisionCircles(pig->pos, pig->width / 2, player->pos, Player::physSize.x / 2)) {
+        auto diff = pig->pos - player->pos;
         if (player->IsDashing()) {
-          pig.DoKick({hlam::vec_norm(diff), balance::kickPower});
+          pig->DoKick({hlam::vec_norm(diff), balance::kickPower});
           player->dashAnim.Finish();
         } else {
-          pig.pos = player->pos + hlam::vec_norm(diff) * (pig.width / 2 + Player::physSize.x / 2);
+          pig->pos = player->pos + hlam::vec_norm(diff) * (pig->width / 2 + Player::physSize.x / 2);
         }
+      }
+    }
+  }
+
+  for (auto& pig : pigs) {
+    if (pig->elevation > 0) {
+      continue;
+    }
+
+    for (auto& pig1 : pigs) {
+      if (pig == pig1) {
+        continue;
+      }
+
+      if (pig1->elevation > 0) {
+        continue;
+      }
+
+      if (CheckCollisionCircles(pig->pos, pig->width / 2, pig1->pos, pig1->width / 2)) {
+        auto diff = pig1->pos - pig->pos;
+        pig1->pos = pig->pos + hlam::vec_norm(diff) * (pig->width);
       }
     }
   }
@@ -106,7 +131,7 @@ void GameScene::Draw() {
   }
 
   for (auto& pig : pigs) {
-    pig.Draw();
+    pig->Draw();
   }
 
   EndMode2D();

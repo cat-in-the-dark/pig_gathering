@@ -16,9 +16,9 @@
 class GameScene : public hlam::Scene {
   hlam::SceneManager* sm;
   std::vector<std::unique_ptr<Player>> players;
+  std::vector<std::unique_ptr<Pig>> pigs;
   Truck truck;
   Camera2D camera;
-  std::vector<Pig> pigs;
 
   Texture2D grass;
 
