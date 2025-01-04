@@ -21,6 +21,7 @@ Texture generateShadow() {
   // TODO: ellipse
   ImageDrawCircle(&mask, radius, radius, radius, WHITE);
   ImageAlphaMask(&img, mask);
+  ClearAlphaColor(img, BLACK);
   auto res = LoadTextureFromImage(img);
   UnloadImage(img);
   UnloadImage(mask);
