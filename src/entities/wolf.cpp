@@ -89,15 +89,15 @@ void WanderWolfBehaviour::Update(float dt) {
 }
 
 Wolf::Wolf(hlam::Vec2 pos, hlam::Vec2 size, float speed, float runSpeed)
-    : behaviours(), pos(pos), size(size), speed(speed), runSpeed(runSpeed) {
+    : behaviours(), pos(pos), size(size), speed(speed), runSpeed(runSpeed), closestPig(nullptr) {
   behaviours.emplace(IDLE, std::make_unique<IdleWolfBehaviour>(this));
   behaviours.emplace(CHASE, std::make_unique<ChaseWolfBehaviour>(this));
   behaviours.emplace(WANDER, std::make_unique<WanderWolfBehaviour>(this));
   behaviours.emplace(KIDNAPPING, std::make_unique<KidnapWolfBehaviour>(this));
 }
 
-void Wolf::ChangeState(WolfState state) {
-  nextState = state;
+void Wolf::ChangeState(WolfState stateToChange) {
+  nextState = stateToChange;
 }
 
 void Wolf::Update(float dt) {
