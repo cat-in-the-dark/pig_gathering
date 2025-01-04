@@ -18,6 +18,8 @@ void Player::Update(float dt) {
   UpdateControls(dt);
 
   pos += playerSpeedVec;
+  pos.x = std::clamp(pos.x, kPlayerPosLeft, kPlayerPosRight);
+  pos.y = std::clamp(pos.y, kPlayerPosUp, kPlayerPosDown);
 }
 
 void Player::UpdateControls(float dt) {
