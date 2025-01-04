@@ -10,24 +10,17 @@
 #define HLAM_COROUTINES_IMPLEMENTATION
 #include <HLAM/coroutines.h>
 
+#define HLAM_VIEWPORT_IMPLEMENTATION
+#include <HLAM/viewport.h>
+
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
 #endif
 
 using namespace hlam;
 
-void DrawLineWired(std::vector<Vector2>& model, Color color) {
-  rlBegin(RL_LINES);
-  rlColor4ub(color.r, color.g, color.b, color.a);
-  for (size_t i = 0; i < model.size() - 1; i++) {
-    rlVertex2f(model[i].x, model[i].y);
-    rlVertex2f(model[i + 1].x, model[i + 1].y);
-  }
-  auto& last = model[model.size() - 1];
-  rlVertex2f(last.x, last.y);
-  rlVertex2f(model[0].x, model[0].y);
-  rlEnd();
-}
+static RenderTexture2D canvas;
+static Viewport viewport = {kWindowWidth, kWindowHeight, Vector2{0, 0}};
 
 class GameScene : public Scene {
   Timer timer = {2};
@@ -51,8 +44,6 @@ class GameScene : public Scene {
     } else {
       DrawRectangle(40, 64, 100, 64, GREEN);
     }
-
-    DrawLineWired(points, BLUE);
   }
 };
 
@@ -61,16 +52,28 @@ void update(void* arg) {
   auto sm = reinterpret_cast<SceneManager*>(arg);
   // TODO: use pattern https://gameprogrammingpatterns.com/game-loop.html
   sm->Update(dt);
-  BeginDrawing();
+
+  viewport.update();
+  BeginTextureMode(canvas);
+  ClearBackground(BLACK);
   if (!sm->Draw()) {
     ClearBackground(BLACK);
     DrawText(TextFormat("SCENE '%s' NOT FOUND", sm->Current().c_str()), 0, 0, 32, RED);
   }
+  EndTextureMode();
+
+  // actual render in screen
+  BeginDrawing();
+  ClearBackground(BLACK);
+  viewport.draw(canvas.texture);
+  DrawFPS(5, 5);
   EndDrawing();
 }
 
 int main() {
   InitWindow(kWindowWidth, kWindowHeight, "Game");
+  canvas = LoadRenderTexture(viewport.canvas_width, viewport.canvas_height);
+  SetTextureFilter(canvas.texture, TEXTURE_FILTER_POINT);
 
   SceneManager sm;
 

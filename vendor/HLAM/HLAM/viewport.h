@@ -3,17 +3,19 @@
 
 namespace hlam {
 
-struct Viewport {
-  int canvas_width;
-  int canvas_height;
-  Vector2 origin;
-  // int mode; // TODO: enum viewport mode: pixel perfect, just fit, etc...
-
+class Viewport {
   // calculated cache
   float scale;
   Rectangle canvas_rect;
   Rectangle screen_rect;
 
+ public:
+  int canvas_width;
+  int canvas_height;
+  Vector2 origin;
+  // int mode; // TODO: enum viewport mode: pixel perfect, just fit, etc...
+
+  Viewport(int canvas_width, int canvas_height, Vector2 origin);
   void update();
   void draw(const Texture& render_texture, const Color& color) const;
 };
@@ -28,6 +30,8 @@ struct Viewport {
 
 namespace hlam {
 
+Viewport::Viewport(int canvas_width, int canvas_height, Vector2 origin)
+    : canvas_width(canvas_width), canvas_height(canvas_height), origin(origin) {}
 void Viewport::update() {
   float screen_width = GetScreenWidth();
   float screen_height = GetScreenHeight();
