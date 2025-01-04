@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "const.h"
+#include "scenes/controls_scene.h"
 
 #define HLAM_SCENE_IMPLEMENTATION
 #include <HLAM/scene.h>
@@ -12,6 +13,9 @@
 
 #define HLAM_VIEWPORT_IMPLEMENTATION
 #include <HLAM/viewport.h>
+
+#define HLAM_MATH_IMPLEMENTATION
+#include <HLAM/hlam_math.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -83,7 +87,9 @@ int main() {
 
   sm.Register<ComboScene>("game")->With<GameScene>()->With<KeyAwaitScene>(&sm, KEY_SPACE, "test_collisions");
 
-  sm.Change("title");
+  sm.Register<ControlsScene>("controls_scene");
+
+  sm.Change("controls_scene");
 
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop_arg(update, &sm, 0, 1);
