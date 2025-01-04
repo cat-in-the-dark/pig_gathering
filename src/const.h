@@ -24,3 +24,8 @@ constexpr float kTruckPosX = 32;
 constexpr float kTruckPosY = 32;
 constexpr float kTruckSpeedX = 8;
 constexpr float kTruckSpeedY = 0;
+
+namespace balance {
+constexpr auto kPigsCount = 10;
+constexpr auto kickPower = 2.5f;
+}  // namespace balance

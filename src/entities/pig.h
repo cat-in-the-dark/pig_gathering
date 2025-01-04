@@ -22,6 +22,8 @@ class Pig : public Entity {
 
   explicit Pig(hlam::Vec2 pos);
 
+  // virtual ~Pig();
+
   void DoKick(Kick kick);
 
   virtual void Update(float dt) override;

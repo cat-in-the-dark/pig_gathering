@@ -15,8 +15,6 @@ class Player {
   KeyboardKey key_dash;
 
   hlam::Vec2 playerSpeedVec;
-  hlam::Vec2 physSize = {24, 32};
-  hlam::Timer dashAnim = {kDashTime, kDashTime};
   hlam::Cooldown dashCooldown = {kDashCooldown};
   float dashPower = kDashPower;
   hlam::Vec2 lastControlsDir = {0, 0};
@@ -24,11 +22,15 @@ class Player {
   void UpdateControls(float dt);
 
  public:
+  static constexpr hlam::Vec2 physSize = {24, 32};
+
   int index;
   hlam::Vec2 pos;
   float playerSpeed;
+  hlam::Timer dashAnim = {kDashTime, kDashTime};
 
   Player(int index, hlam::Vec2 pos, float playerSpeed);
   void Draw();
   void Update(float dt);
+  bool IsDashing() const;
 };

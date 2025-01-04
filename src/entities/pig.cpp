@@ -35,6 +35,10 @@ Pig::Pig(hlam::Vec2 pos)
       isKicked_(false),
       shadow_(generateShadow()) {}
 
+// Pig::~Pig() {
+//   UnloadTexture(shadow_);
+// }
+
 void Pig::DoKick(Kick kick) {
   elevationSpeed_ = kick.impulse * sinf(kickAngle);
   auto horizontalSpeed = kick.impulse * cosf(kickAngle);

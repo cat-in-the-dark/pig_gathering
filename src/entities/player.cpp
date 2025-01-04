@@ -37,6 +37,10 @@ void Player::Update(float dt) {
   pos.y = std::clamp(pos.y, kPlayerPosUp, kPlayerPosDown);
 }
 
+bool Player::IsDashing() const {
+  return !dashAnim.IsPassed();
+}
+
 void Player::UpdateControls(float dt) {
   if (dashAnim.IsPassed()) {  // forbid moving in dash
     lastControlsDir.x = 0;

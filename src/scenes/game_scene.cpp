@@ -1,5 +1,7 @@
 #include "game_scene.h"
 
+#include <HLAM/collisions2D.h>
+
 #include <algorithm>
 
 #include "const.h"
@@ -21,11 +23,24 @@ GameScene::~GameScene() {
   UnloadTexture(grass);
 }
 
+std::vector<Pig> spawnPigs() {
+  std::vector<Pig> result{};
+  // simple uniform distribution
+  for (auto i = 0; i < balance::kPigsCount; i++) {
+    result.push_back(Pig{
+        {static_cast<float>(GetRandomValue(kWorldPosLeft + Pig::pigWitdh / 2, kWorldPosRight - Pig::pigWitdh / 2)),
+         static_cast<float>(GetRandomValue(kWorldPosUp + Pig::pigHeight / 2, kWorldPosDown - Pig::pigHeight / 2))}});
+  }
+
+  return result;
+}
+
 void GameScene::Activate() {
   camera.offset = {kWindowHeight / 2, kWindowHeight / 2};
   camera.target = {0, 0};
   camera.rotation = 0;
   camera.zoom = 1;
+  pigs = spawnPigs();
 }
 void GameScene::Update(float dt) {
   truck.Update(dt);
@@ -41,6 +56,34 @@ void GameScene::Update(float dt) {
 
   if (truck.pos.x >= kWindowWidth) {
     sm->Change("results");
+  }
+
+  std::sort(pigs.begin(), pigs.end(), [](auto& p1, auto& p2) {
+    auto el1 = p1.elevation;
+    auto el2 = p2.elevation;
+
+    if (el1 < 0) {
+      el1 = 0.0f;
+    }
+
+    if (el2 < 0) {
+      el2 = 0.0f;
+    }
+
+    return el1 < el2;
+  });
+
+  for (auto& pig : pigs) {
+    pig.Update(dt);
+    if (CheckCollisionCircles(pig.pos, pig.width / 2, player.pos, Player::physSize.x / 2)) {
+      auto diff = pig.pos - player.pos;
+      if (player.IsDashing()) {
+        pig.DoKick({hlam::vec_norm(diff), balance::kickPower});
+        player.dashAnim.Finish();
+      } else {
+        // TODO: move pigs
+      }
+    }
   }
 }
 void GameScene::Draw() {
@@ -58,6 +101,10 @@ void GameScene::Draw() {
   truck.Draw();
   for (auto& player : players) {
     player->Draw();
+  }
+
+  for (auto& pig : pigs) {
+    pig.Draw();
   }
 
   EndMode2D();

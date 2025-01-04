@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 
+#include "entities/pig.h"
 #include "entities/player.h"
 #include "entities/truck.h"
 
@@ -17,6 +18,7 @@ class GameScene : public hlam::Scene {
   std::vector<std::unique_ptr<Player>> players;
   Truck truck;
   Camera2D camera;
+  std::vector<Pig> pigs;
 
   Texture2D grass;
 

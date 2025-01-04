@@ -38,8 +38,6 @@ void TestKickScene::Update(float dt) {
     kickDir.y += dt;
   }
 
-  kickPower = 2.5f;
-
   auto index = -1;
   auto key = GetKeyPressed();
   // dirty
