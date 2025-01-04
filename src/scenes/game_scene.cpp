@@ -73,15 +73,17 @@ void GameScene::Update(float dt) {
     return el1 < el2;
   });
 
-  for (auto& pig : pigs) {
-    pig.Update(dt);
-    if (CheckCollisionCircles(pig.pos, pig.width / 2, player.pos, Player::physSize.x / 2)) {
-      auto diff = pig.pos - player.pos;
-      if (player.IsDashing()) {
-        pig.DoKick({hlam::vec_norm(diff), balance::kickPower});
-        player.dashAnim.Finish();
-      } else {
-        // TODO: move pigs
+  for (auto& player : players) {
+    for (auto& pig : pigs) {
+      pig.Update(dt);
+      if (CheckCollisionCircles(pig.pos, pig.width / 2, player->pos, Player::physSize.x / 2)) {
+        auto diff = pig.pos - player->pos;
+        if (player->IsDashing()) {
+          pig.DoKick({hlam::vec_norm(diff), balance::kickPower});
+          player->dashAnim.Finish();
+        } else {
+          // TODO: move pigs
+        }
       }
     }
   }
