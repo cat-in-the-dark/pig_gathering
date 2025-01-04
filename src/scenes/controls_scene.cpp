@@ -4,7 +4,7 @@
 
 using namespace hlam;
 
-ControlsScene::ControlsScene() : player(0, Vec2{32, 32}, 64) {}
+ControlsScene::ControlsScene() : player(0, Vec2{32, 32}, kPlayerSpeed) {}
 void ControlsScene::Activate() {
   camera.offset = {kWindowWidth / 2, kWindowHeight / 2};
   camera.target = {0, 0};
