@@ -5,6 +5,8 @@
 
 #include <algorithm>
 
+#include "const.h"
+
 constexpr auto epsilon = 0.0001f;
 constexpr auto pixelsInMeter = 8.0f;
 
@@ -53,14 +55,11 @@ void Pig::DoKick(Kick kick) {
 
 void Pig::Update(float dt) {
   dt *= 3;
-  if (isKicked_) {
-    if (elevation >= 0.0f) {
-      elevation = std::max(0.0f, elevation + elevationSpeed_ * dt);
-      elevationSpeed_ -= gravityAcceleration * dt;
-    } else {
-      elevationSpeed_ = 0.0f;
-      isKicked_ = false;
-    }
+  if (elevation >= 0.0f) {
+    elevation = std::max(0.0f, elevation + elevationSpeed_ * dt);
+    elevationSpeed_ -= gravityAcceleration * dt;
+  } else {
+    elevationSpeed_ = 0.0f;
   }
 
   // horizontal update
@@ -77,6 +76,15 @@ void Pig::Update(float dt) {
     auto newDir = atan2f(speed.y, speed.x);
     if (fabsf(dir - newDir) > epsilon) {
       speed = {0, 0};
+    } else {
+      // Check world boundaries
+      auto newPos = pos + speed;
+      if (newPos.x > kWorldPosRight || newPos.x < kWorldPosLeft) {
+        speed.x *= -1;
+      }
+      if (newPos.y > kWorldPosDown || newPos.y < kWorldPosUp) {
+        speed.y *= -1;
+      }
     }
   }
 
