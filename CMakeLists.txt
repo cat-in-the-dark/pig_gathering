@@ -67,7 +67,7 @@ add_subdirectory(${THIRDPARTY_DIR}/raylib)
 
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 
-target_include_directories(${PROJECT_NAME} PUBLIC SYSTEM vendor/raylib/src)
+target_include_directories(${PROJECT_NAME} PUBLIC SYSTEM ${THIRDPARTY_DIR}/raylib/src ${THIRDPARTY_DIR}/HLAM)
 target_link_libraries(${PROJECT_NAME} raylib)
 
 # Checks if OSX and links appropriate frameworks (Only required on MacOS)

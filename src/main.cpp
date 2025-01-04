@@ -5,10 +5,10 @@
 #include "const.h"
 
 #define HLAM_SCENE_IMPLEMENTATION
-#include "vendor/HLAM/scene.h"
+#include <HLAM/scene.h>
 
 #define HLAM_COROUTINES_IMPLEMENTATION
-#include "vendor/HLAM/coroutines.h"
+#include <HLAM/coroutines.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
