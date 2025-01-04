@@ -120,6 +120,12 @@ inline bool collision_line_rect(const Vec2& p1, const Vec2& p2, const Rect& r) {
   return false;
 }
 
+inline Vec2 collision_point_circle_rectangle(Circle circle, Rect rect) {
+  auto nearestX = std::clamp(circle.center.x, rect.x, rect.x + rect.width);
+  auto nearestY = std::clamp(circle.center.y, rect.y, rect.y + rect.height);
+
+  return {nearestX, nearestY};
+}
 }  // namespace hlam
 
 #endif  // HLAM_COLLISIONS2D_H

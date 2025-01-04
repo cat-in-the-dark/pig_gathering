@@ -74,7 +74,18 @@ void GameScene::Update(float dt) {
   std::sort(players.begin(), players.end(),
             [](const auto& p1, const auto& p2) { return p1->IsDashing() && !p2->IsDashing(); });
 
+  auto truckCenter = truck.pos + truck.size / 2;
+  auto truckRect = Rect{truck.pos.x, truck.pos.y, truck.size.x, truck.size.y};
+
   for (auto& player : players) {
+    // player - truck collisions
+    if (CheckCollisionCircleRec(player->pos, player->physSize.x / 2, truckRect)) {
+      auto nearestPoint = collision_point_circle_rectangle({player->pos, player->physSize.x / 2}, truckRect);
+      auto diff = player->pos - nearestPoint;
+      player->pos = nearestPoint + hlam::vec_norm(diff) * player->physSize / 2;
+    }
+
+    // player - player collisions
     for (auto& player1 : players) {
       if (player1 == player) {
         continue;
@@ -86,6 +97,7 @@ void GameScene::Update(float dt) {
       }
     }
 
+    // player - pig collisions
     for (auto& pig : pigs) {
       pig->Update(dt);
       if (pig->elevation > 0) {
@@ -111,6 +123,7 @@ void GameScene::Update(float dt) {
       continue;
     }
 
+    // pig - truck collisions
     if (CheckCollisionCircleRec(pig->pos, pig->width / 2, {truck.pos.x, truck.pos.y, truck.size.x, truck.size.y})) {
       I = pigs.erase(I);
       gameState->stats.pigs_gathered++;
@@ -119,6 +132,7 @@ void GameScene::Update(float dt) {
     }
   }
 
+  // pig - pig collisions
   for (auto& pig : pigs) {
     if (pig->elevation > 0) {
       continue;
