@@ -55,11 +55,17 @@ void Pig::DoKick(Kick kick) {
 
 void Pig::Update(float dt) {
   dt *= 3;
-  if (elevation >= 0.0f) {
-    elevation = std::max(0.0f, elevation + elevationSpeed_ * dt);
-    elevationSpeed_ -= gravityAcceleration * dt;
-  } else {
-    elevationSpeed_ = 0.0f;
+  if (isKicked_) {
+    if (elevation >= 0.0f) {
+      elevation += elevationSpeed_ * dt;
+      elevationSpeed_ -= gravityAcceleration * dt;
+    }
+
+    if (elevation < 0.0f) {
+      isKicked_ = false;
+      elevationSpeed_ = 0.0f;
+      elevation = 0.0f;
+    }
   }
 
   // horizontal update
