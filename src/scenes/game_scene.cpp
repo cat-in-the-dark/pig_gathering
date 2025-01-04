@@ -82,7 +82,7 @@ void GameScene::Update(float dt) {
           pig.DoKick({hlam::vec_norm(diff), balance::kickPower});
           player->dashAnim.Finish();
         } else {
-          // TODO: move pigs
+          pig.pos = player->pos + hlam::vec_norm(diff) * (pig.width / 2 + Player::physSize.x / 2);
         }
       }
     }
