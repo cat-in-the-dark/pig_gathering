@@ -78,6 +78,7 @@ void update(void* arg) {
 }
 
 int main() {
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(kWindowWidth, kWindowHeight, "Game");
   canvas = LoadRenderTexture(viewport.canvas_width, viewport.canvas_height);
   SetTextureFilter(canvas.texture, TEXTURE_FILTER_POINT);
