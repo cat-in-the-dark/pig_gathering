@@ -36,11 +36,9 @@ void TestKickScene::Update(float dt) {
     kickDir.y -= dt;
   } else if (IsKeyDown(KEY_S)) {
     kickDir.y += dt;
-  } else if (IsKeyDown(KEY_Q)) {
-    kickPower -= 2 * dt;
-  } else if (IsKeyDown(KEY_E)) {
-    kickPower += 2 * dt;
   }
+
+  kickPower = 2.5f;
 
   auto index = -1;
   auto key = GetKeyPressed();
@@ -51,7 +49,7 @@ void TestKickScene::Update(float dt) {
 
   if (index != -1) {
     auto pig = pigs[index];
-    pig->DoKick({kickDir, kickPower});
+    pig->DoKick({hlam::vec_norm(kickDir), kickPower});
   }
 
   for (const auto& pig : pigs) {
@@ -61,7 +59,20 @@ void TestKickScene::Update(float dt) {
 
 void TestKickScene::Draw() {
   DrawText(TextFormat("%0.2f %0.2f %0.2f", kickDir.x, kickDir.y, kickPower), 10, 20, 20, WHITE);
-  std::sort(pigs.begin(), pigs.end(), [](auto p1, auto p2) { return p1->elevation < p2->elevation; });
+  std::sort(pigs.begin(), pigs.end(), [](auto p1, auto p2) {
+    auto el1 = p1->elevation;
+    auto el2 = p2->elevation;
+
+    if (el1 < 0) {
+      el1 = 0.0f;
+    }
+
+    if (el2 < 0) {
+      el2 = 0.0f;
+    }
+
+    return el1 < el2;
+  });
 
   for (const auto& pig : pigs) {
     pig->Draw();

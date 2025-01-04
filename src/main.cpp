@@ -54,9 +54,9 @@ class GameScene : public Scene {
   }
 };
 
-void update(void* arg) {
+void update(void *arg) {
   float dt = GetFrameTime();
-  auto sm = reinterpret_cast<SceneManager*>(arg);
+  auto sm = reinterpret_cast<SceneManager *>(arg);
   // TODO: use pattern https://gameprogrammingpatterns.com/game-loop.html
   sm->Update(dt);
 
@@ -98,7 +98,7 @@ int main() {
 
   sm.Register<ComboScene>("results")->With<ResultsScene>(&gameState)->With<KeyAwaitScene>(&sm, KEY_SPACE, "game");
 
-  sm.Change("controls_scene");
+  sm.Change("test_kick");
 
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop_arg(update, &sm, 0, 1);

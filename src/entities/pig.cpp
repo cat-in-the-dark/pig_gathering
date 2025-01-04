@@ -10,7 +10,7 @@ constexpr auto pixelsInMeter = 8.0f;
 
 constexpr auto kickAngle = PI / 4;
 
-constexpr auto gravityAcceleration = 9.8f;
+constexpr auto gravityAcceleration = 9.8f / pixelsInMeter;
 constexpr auto airFriction = 0.03f * pixelsInMeter;
 constexpr auto groundFriction = 10.0f * pixelsInMeter;
 
@@ -36,7 +36,7 @@ Pig::Pig(hlam::Vec2 pos)
       shadow_(generateShadow()) {}
 
 void Pig::DoKick(Kick kick) {
-  elevationSpeed_ = kick.impulse * sinf(kickAngle) * 10;  // fixme
+  elevationSpeed_ = kick.impulse * sinf(kickAngle);
   auto horizontalSpeed = kick.impulse * cosf(kickAngle);
 
   speed = kick.dir * horizontalSpeed;
@@ -44,6 +44,7 @@ void Pig::DoKick(Kick kick) {
 }
 
 void Pig::Update(float dt) {
+  dt *= 3;
   if (isKicked_) {
     if (elevation >= 0.0f) {
       std::cout << elevation << std::endl;
@@ -81,6 +82,6 @@ void Pig::Draw() {
     DrawTextureV(shadow_, pos - drawDelta, WHITE);
   }
 
-  DrawEllipse(pos.x, pos.y - elevation, width / 2, height / 2, BLACK);
-  DrawEllipseLines(pos.x, pos.y - elevation, width / 2, height / 2, WHITE);
+  DrawEllipse(pos.x, pos.y - elevation * 50, width / 2, height / 2, BLACK);
+  DrawEllipseLines(pos.x, pos.y - elevation * 50, width / 2, height / 2, WHITE);
 }
