@@ -21,6 +21,8 @@
 #include <emscripten/emscripten.h>
 #endif
 
+#include "scenes/test_kick_scene.h"
+
 using namespace hlam;
 
 static RenderTexture2D canvas;
@@ -86,6 +88,8 @@ int main() {
       ->With<KeyAwaitScene>(&sm, KEY_SPACE, "game");
 
   sm.Register<ComboScene>("game")->With<GameScene>()->With<KeyAwaitScene>(&sm, KEY_SPACE, "test_collisions");
+
+  sm.Register<TestKickScene>("test_kick");
 
   sm.Register<ControlsScene>("controls_scene");
 

@@ -1,29 +1,11 @@
 #ifndef HLAM_MATH_H
 #define HLAM_MATH_H
 
+#include <raylib.h>
+
 #include <cmath>
 
 namespace hlam {
-
-#ifndef RAYLIB_H
-struct Vec2 {
-  float x;
-  float y;
-};
-
-struct Vec3 {
-  float x;
-  float y;
-  float z;
-};
-
-struct Rect {
-  float x;
-  float y;
-  float width;
-  float height;
-};
-#else
 
 // Don't add anything, just define those here so everything (incl. operators)
 // is contained in our namespace
@@ -32,8 +14,6 @@ struct Vec2 : public ::Vector2 {};
 struct Vec3 : public ::Vector3 {};
 
 struct Rect : public ::Rectangle {};
-
-#endif
 
 struct Triangle2 {
   Vec2 p1;
@@ -106,6 +86,9 @@ inline Vec3 vec_cross(const Vec3 &v0, const Vec3 &v1) {
 
 inline float vec_length(const Vec2 &v) { return std::sqrt(v.x * v.x + v.y * v.y); }
 inline float vec_length(const Vec3 &v) { return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z); }
+
+inline float vec_length_sqr(const Vec2 &v) { return v.x * v.x + v.y * v.y; }
+inline float vec_length_sqr(const Vec3 &v) { return v.x * v.x + v.y * v.y + v.z * v.z; }
 
 inline Vec2 vec_norm(const Vec2 &v) {
   Vec2 result{};
