@@ -3,6 +3,8 @@
 #include <HLAM/textures.h>
 #include <raylib.h>
 
+#include <algorithm>
+
 constexpr auto epsilon = 0.0001f;
 constexpr auto pixelsInMeter = 8.0f;
 
