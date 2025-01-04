@@ -12,9 +12,11 @@
 #include "entities/pig.h"
 #include "entities/player.h"
 #include "entities/truck.h"
+#include "state.h"
 
 class GameScene : public hlam::Scene {
   hlam::SceneManager* sm;
+  GameState* gameState;
   std::vector<std::unique_ptr<Player>> players;
   std::vector<std::unique_ptr<Pig>> pigs;
   Truck truck;
@@ -23,7 +25,7 @@ class GameScene : public hlam::Scene {
   Texture2D grass;
 
  public:
-  GameScene(hlam::SceneManager* sm);
+  GameScene(hlam::SceneManager* sm, GameState* gameState);
   void Activate() override;
   void Update(float dt) override;
   void Draw() override;

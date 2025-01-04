@@ -8,8 +8,11 @@
 
 using namespace hlam;
 
-GameScene::GameScene(SceneManager* sm)
-    : sm(sm), players(), truck(Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}) {
+GameScene::GameScene(SceneManager* sm, GameState* gameState)
+    : sm(sm),
+      gameState(gameState),
+      players(),
+      truck(Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}) {
   auto grassImg = LoadImage("assets/grass-0001.png");
   ImageFormat(&grassImg, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
   ImageColorInvert(&grassImg);
@@ -36,6 +39,7 @@ auto spawnPigs() {
 }
 
 void GameScene::Activate() {
+  gameState->stats = {};
   camera.offset = {kWindowHeight / 2, kWindowHeight / 2};
   camera.target = {0, 0};
   camera.rotation = 0;
@@ -44,6 +48,7 @@ void GameScene::Activate() {
 }
 void GameScene::Update(float dt) {
   truck.Update(dt);
+  gameState->stats.time += dt;
   for (auto& player : players) {
     player->Update(dt);
   }
@@ -89,6 +94,21 @@ void GameScene::Update(float dt) {
           pig->pos = player->pos + hlam::vec_norm(diff) * (pig->width / 2 + Player::physSize.x / 2);
         }
       }
+    }
+  }
+
+  for (auto I = pigs.begin(); I != pigs.end();) {
+    auto& pig = *I;
+    if (pig->elevation > 0) {
+      I++;
+      continue;
+    }
+
+    if (CheckCollisionCircleRec(pig->pos, pig->width / 2, {truck.pos.x, truck.pos.y, truck.size.x, truck.size.y})) {
+      I = pigs.erase(I);
+      gameState->stats.pigs_gathered++;
+    } else {
+      I++;
     }
   }
 

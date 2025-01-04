@@ -63,8 +63,8 @@ int main() {
   canvas = LoadRenderTexture(viewport.canvas_width, viewport.canvas_height);
   SetTextureFilter(canvas.texture, TEXTURE_FILTER_POINT);
 
-  SceneManager sm;
-  GameState gameState;
+  SceneManager sm{};
+  GameState gameState{};
 
   sm.Register<ComboScene>("title")
       ->With<TextureScene>(LoadTexture("assets/logo.png"), 400, 240)
@@ -72,7 +72,7 @@ int main() {
 
   sm.Register<TestKickScene>("test_kick");
 
-  sm.Register<GameScene>("game", &sm);
+  sm.Register<GameScene>("game", &sm, &gameState);
 
   sm.Register<ComboScene>("results")->With<ResultsScene>(&gameState)->With<KeyAwaitScene>(&sm, KEY_SPACE, "game");
 
