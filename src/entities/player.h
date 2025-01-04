@@ -8,6 +8,12 @@
 #include "const.h"
 
 class Player {
+  KeyboardKey key_up;
+  KeyboardKey key_down;
+  KeyboardKey key_left;
+  KeyboardKey key_right;
+  KeyboardKey key_dash;
+
   hlam::Vec2 playerSpeedVec;
   hlam::Vec2 physSize = {24, 32};
   hlam::Timer dashAnim = {kDashTime, kDashTime};

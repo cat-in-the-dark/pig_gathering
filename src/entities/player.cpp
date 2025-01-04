@@ -8,7 +8,22 @@
 
 using namespace hlam;
 
-Player::Player(int index, hlam::Vec2 pos, float playerSpeed) : index(index), pos(pos), playerSpeed(playerSpeed) {}
+Player::Player(int index, hlam::Vec2 pos, float playerSpeed) : index(index), pos(pos), playerSpeed(playerSpeed) {
+  if (index == 0) {
+    key_up = KEY_W;
+    key_down = KEY_S;
+    key_left = KEY_A;
+    key_right = KEY_D;
+    key_dash = KEY_SPACE;
+  }
+  if (index == 1) {
+    key_up = KEY_UP;
+    key_down = KEY_DOWN;
+    key_left = KEY_LEFT;
+    key_right = KEY_RIGHT;
+    key_dash = KEY_RIGHT_SHIFT;
+  }
+}
 void Player::Draw() {
   DrawRectangleV(pos - physSize / 2, physSize, WHITE);
 }
@@ -27,21 +42,21 @@ void Player::UpdateControls(float dt) {
     lastControlsDir.x = 0;
     lastControlsDir.y = 0;
 
-    if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S) || IsGamepadButtonDown(index, GAMEPAD_BUTTON_LEFT_FACE_UP)) {
+    if (IsKeyDown(key_down) || IsGamepadButtonDown(index, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) {
       lastControlsDir.y = 1;
     }
-    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W) || IsGamepadButtonDown(index, GAMEPAD_BUTTON_LEFT_FACE_DOWN)) {
+    if (IsKeyDown(key_up) || IsGamepadButtonDown(index, GAMEPAD_BUTTON_LEFT_FACE_UP)) {
       lastControlsDir.y = -1;
     }
-    if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D) || IsGamepadButtonDown(index, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) {
+    if (IsKeyDown(key_right) || IsGamepadButtonDown(index, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) {
       lastControlsDir.x = 1;
     }
-    if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A) || IsGamepadButtonDown(index, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) {
+    if (IsKeyDown(key_left) || IsGamepadButtonDown(index, GAMEPAD_BUTTON_LEFT_FACE_LEFT)) {
       lastControlsDir.x = -1;
     }
   }
 
-  if (IsKeyDown(KEY_SPACE) && dashCooldown.Invoke()) {
+  if (IsKeyDown(key_dash) && dashCooldown.Invoke()) {
     dashAnim.Reset();
   }
 

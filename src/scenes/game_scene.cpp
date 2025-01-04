@@ -7,14 +7,15 @@
 using namespace hlam;
 
 GameScene::GameScene(SceneManager* sm)
-    : sm(sm),
-      player(0, Vec2{kPlayerSpawnPosX, kPlayerSpawnPosY}, kPlayerSpeed),
-      truck(Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}) {
+    : sm(sm), players(), truck(Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}) {
   auto grassImg = LoadImage("assets/grass-0001.png");
   ImageFormat(&grassImg, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
   ImageColorInvert(&grassImg);
   grass = LoadTextureFromImage(grassImg);
   UnloadImage(grassImg);
+
+  players.push_back(std::make_unique<Player>(0, Vec2{kPlayerSpawnPosX, kPlayerSpawnPosY}, kPlayerSpeed));
+  players.push_back(std::make_unique<Player>(1, Vec2{kPlayerSpawnPosX + 64, kPlayerSpawnPosY}, kPlayerSpeed));
 }
 GameScene::~GameScene() {
   UnloadTexture(grass);
@@ -28,10 +29,15 @@ void GameScene::Activate() {
 }
 void GameScene::Update(float dt) {
   truck.Update(dt);
-  player.Update(dt);
+  for (auto& player : players) {
+    player->Update(dt);
+  }
 
-  camera.target.x = std::clamp(player.pos.x, kWorldPosLeft + camera.offset.x, kWorldPosRight - camera.offset.x);
-  camera.target.y = std::clamp(player.pos.y, kWorldPosUp + camera.offset.y, kWorldPosDown - camera.offset.y);
+  if (players.size() > 0) {
+    // TODO: get average point between all players
+    camera.target.x = std::clamp(players[0]->pos.x, kWorldPosLeft + camera.offset.x, kWorldPosRight - camera.offset.x);
+    camera.target.y = std::clamp(players[0]->pos.y, kWorldPosUp + camera.offset.y, kWorldPosDown - camera.offset.y);
+  }
 
   if (truck.pos.x >= kWindowWidth) {
     sm->Change("results");
@@ -50,7 +56,9 @@ void GameScene::Draw() {
   }
 
   truck.Draw();
-  player.Draw();
+  for (auto& player : players) {
+    player->Draw();
+  }
 
   EndMode2D();
 }
