@@ -5,17 +5,16 @@
 
 class Entity {
  public:
-  Entity(hlam::Vec2 pos, int width, int height);
-
   hlam::Vec2 pos;
+  int width;
+  int height;
   hlam::Vec2 speed;
   float elevation;
 
-  int width;
-  int height;
-
+  Entity(hlam::Vec2 pos, int width, int height);
   virtual void Update(float dt) = 0;
   virtual void Draw() = 0;
+  virtual ~Entity();
 };
 
 #endif  // ENTITY_H

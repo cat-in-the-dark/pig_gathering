@@ -1,7 +1,6 @@
 #include "pig.h"
 
 #include <raylib.h>
-#include <raymath.h>
 
 constexpr auto epsilon = 0.0001f;
 constexpr auto pixelsInMeter = 8.0f;
@@ -12,7 +11,7 @@ constexpr auto gravityAcceleration = 9.8f * pixelsInMeter;
 constexpr auto airFriction = 0.03f * pixelsInMeter;
 constexpr auto groundFriction = 10.0f * pixelsInMeter;
 
-Pig::Pig(hlam::Vec2 pos) : elevationSpeed_(0.0f), Entity(pos, pigWitdh, pigHeight) {}
+Pig::Pig(hlam::Vec2 pos) : Entity(pos, pigWitdh, pigHeight), elevationSpeed_(0.0f) {}
 
 void Pig::DoKick(Kick kick) {
   elevationSpeed_ = kick.impulse * sinf(kickAngle);
