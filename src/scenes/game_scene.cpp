@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "const.h"
+#include "entities/wolf.h"
 
 using namespace hlam;
 
@@ -21,6 +22,9 @@ GameScene::GameScene(SceneManager* sm, GameState* gameState)
 
   players.push_back(std::make_unique<Player>(0, Vec2{kPlayerSpawnPosX, kPlayerSpawnPosY}, kPlayerSpeed));
   players.push_back(std::make_unique<Player>(1, Vec2{kPlayerSpawnPosX + 64, kPlayerSpawnPosY}, kPlayerSpeed));
+
+  // DEBUG wolfs
+  wolfs.push_back(std::make_unique<Wolf>(Vec2{360, 200}, Vec2{16, 16}, kWolfSpeed, kWolfRunSpeed));
 }
 GameScene::~GameScene() {
   UnloadTexture(grass);
@@ -49,14 +53,17 @@ void GameScene::Activate() {
 void GameScene::Update(float dt) {
   truck.Update(dt);
   gameState->stats.time += dt;
+  hlam::Vec2 avgPos{0, 0};
   for (auto& player : players) {
     player->Update(dt);
+    avgPos += player->pos;
   }
 
   if (players.size() > 0) {
-    // TODO: get average point between all players
-    camera.target.x = std::clamp(players[0]->pos.x, kWorldPosLeft + camera.offset.x, kWorldPosRight - camera.offset.x);
-    camera.target.y = std::clamp(players[0]->pos.y, kWorldPosUp + camera.offset.y, kWorldPosDown - camera.offset.y);
+    camera.target.x =
+        std::clamp(avgPos.x / players.size(), kWorldPosLeft + camera.offset.x, kWorldPosRight - camera.offset.x);
+    camera.target.y =
+        std::clamp(avgPos.y / players.size(), kWorldPosUp + camera.offset.y, kWorldPosDown - camera.offset.y);
   }
 
   if (truck.pos.x >= kWindowWidth) {
@@ -139,6 +146,24 @@ void GameScene::Update(float dt) {
       }
     }
   }
+
+  for (auto& wolf : wolfs) {
+    if (wolf->closestPig == nullptr || wolf->closestPig->isKicked()) {
+      // TODO: or pig is dead/gathered...
+      Pig* closestPig = nullptr;
+      float closestPigDist = 100000000;
+      for (auto& pig : pigs) {
+        float dist = hlam::vec_length(wolf->pos - pig->pos);
+        if (dist < closestPigDist) {
+          closestPigDist = dist;
+          closestPig = pig.get();
+        }
+      }
+      wolf->closestPig = closestPig;
+    }
+
+    wolf->Update(dt);
+  }
 }
 void GameScene::Draw() {
   BeginMode2D(camera);
@@ -159,6 +184,10 @@ void GameScene::Draw() {
 
   for (auto& pig : pigs) {
     pig->Draw();
+  }
+
+  for (auto& wolf : wolfs) {
+    wolf->Draw();
   }
 
   EndMode2D();

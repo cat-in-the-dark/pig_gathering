@@ -14,11 +14,14 @@
 #include "entities/truck.h"
 #include "state.h"
 
+class Wolf;  // forward
+
 class GameScene : public hlam::Scene {
   hlam::SceneManager* sm;
   GameState* gameState;
   std::vector<std::unique_ptr<Player>> players;
   std::vector<std::unique_ptr<Pig>> pigs;
+  std::vector<std::unique_ptr<Wolf>> wolfs;
   Truck truck;
   Camera2D camera;
 

@@ -6,10 +6,8 @@
 namespace hlam {
 // Timer checks whether time is passed or not.
 class Timer {
-  const float time;
-  float elapsed;
-
  public:
+  float time;
   Timer(float time, float elapsed = 0);
 
   bool IsPassed() const;
@@ -18,6 +16,9 @@ class Timer {
   float Elapsed() const;
   void Finish();
   float Percentage() const;
+
+ private:
+  float elapsed;
 };
 
 // OneShot checks whether time is passed or not and returns true only once

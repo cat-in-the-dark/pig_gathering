@@ -30,6 +30,12 @@ class Pig : public Entity {
 
   virtual void Draw() override;
 
+  bool isKicked() const {
+    return isKicked_;
+  }
+
+  void Kidnapped();
+
  private:
   float elevationSpeed_;
   bool isKicked_;

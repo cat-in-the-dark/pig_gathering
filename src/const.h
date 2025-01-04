@@ -25,6 +25,12 @@ constexpr float kTruckPosY = 32;
 constexpr float kTruckSpeedX = 8;
 constexpr float kTruckSpeedY = 0;
 
+constexpr float kWolfSpeed = 32;
+constexpr float kWolfRunSpeed = kPlayerSpeed + 32;
+constexpr int kMinWolfWanderDist = 32;
+constexpr int kMaxWolfWanderDist = 32 * 3;
+constexpr float kWolfChaseTriggerDist = 96;
+
 namespace balance {
 constexpr auto kPigsCount = 10;
 constexpr auto kickPower = 2.5f;

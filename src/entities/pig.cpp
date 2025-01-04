@@ -99,3 +99,8 @@ void Pig::Draw() {
   DrawEllipse(pos.x, pos.y - elevation * 50, width / 2, height / 2, BLACK);
   DrawEllipseLines(pos.x, pos.y - elevation * 50, width / 2, height / 2, WHITE);
 }
+
+void Pig::Kidnapped() {
+  // TODO: change state
+  TraceLog(LOG_INFO, "AAAAA kidnapped!!!!");
+}
