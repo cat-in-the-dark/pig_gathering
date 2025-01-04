@@ -2,13 +2,15 @@
 
 #include <raylib.h>
 
+#include <algorithm>
+
 #include "entities/entity.h"
 #include "entities/pig.h"
 
 void TestKickScene::Activate() {
   auto pig = Pig{{10, 20}};
-  entities = {std::make_shared<Pig>(hlam::Vec2{50, 50}), std::make_shared<Pig>(hlam::Vec2{100, 50}),
-              std::make_shared<Pig>(hlam::Vec2{150, 50}), std::make_shared<Pig>(hlam::Vec2{50, 100})};
+  pigs = {std::make_shared<Pig>(hlam::Vec2{50, 50}), std::make_shared<Pig>(hlam::Vec2{100, 50}),
+          std::make_shared<Pig>(hlam::Vec2{150, 50}), std::make_shared<Pig>(hlam::Vec2{50, 100})};
 }
 
 void TestKickScene::Exit() {}
@@ -41,33 +43,27 @@ void TestKickScene::Update(float dt) {
   }
 
   auto index = -1;
+  auto key = GetKeyPressed();
   // dirty
-  if (IsKeyDown(KEY_ONE)) {
-    index = 0;
-  } else if (IsKeyDown(KEY_TWO)) {
-    index = 1;
-  } else if (IsKeyDown(KEY_THREE)) {
-    index = 2;
-  } else if (IsKeyDown(KEY_FOUR)) {
-    index = 3;
-  }
-
-  for (const auto &entity : entities) {
-    entity->Update(dt);
+  if (KEY_ONE <= key && key <= KEY_FOUR) {
+    index = key - KEY_ONE;
   }
 
   if (index != -1) {
-    auto pig = reinterpret_cast<Pig *>(entities[index].get());
+    auto pig = pigs[index];
     pig->DoKick({kickDir, kickPower});
+  }
+
+  for (const auto& pig : pigs) {
+    pig->Update(dt);
   }
 }
 
 void TestKickScene::Draw() {
   DrawText(TextFormat("%0.2f %0.2f %0.2f", kickDir.x, kickDir.y, kickPower), 10, 20, 20, WHITE);
-  for (const auto &entity : entities) {
-    if (entity->elevation > 0.0f) {
-      drawCircleShadow(entity->pos + hlam::Vec2{10, 10}, entity->width);
-    }
-    entity->Draw();
+  std::sort(pigs.begin(), pigs.end(), [](auto p1, auto p2) { return p1->elevation < p2->elevation; });
+
+  for (const auto& pig : pigs) {
+    pig->Draw();
   }
 }

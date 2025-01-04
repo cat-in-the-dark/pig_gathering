@@ -1,13 +1,14 @@
 #ifndef TEST_KICK_SCENE_H
 #define TEST_KICK_SCENE_H
 
-#undef HLAM_SCENE_IMPLEMENTATION
 #include <HLAM/hlam_math.h>
+
+#undef HLAM_SCENE_IMPLEMENTATION
 #include <HLAM/scene.h>
 
 #include <vector>
 
-class Entity;
+class Pig;
 
 class TestKickScene : public hlam::Scene {
  public:
@@ -17,7 +18,7 @@ class TestKickScene : public hlam::Scene {
   void Draw() override;
 
  private:
-  std::vector<std::shared_ptr<Entity>> entities;
+  std::vector<std::shared_ptr<Pig>> pigs;
   hlam::Vec2 kickDir;
   float kickPower;
 };

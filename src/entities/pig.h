@@ -15,6 +15,11 @@ class Pig : public Entity {
   static constexpr auto pigWitdh = 24;
   static constexpr auto pigHeight = 24;
 
+  static constexpr hlam::Vec2 drawDelta = {pigWitdh / 2, pigHeight / 2};
+
+  hlam::Vec2 speed;
+  float elevation;
+
   explicit Pig(hlam::Vec2 pos);
 
   void DoKick(Kick kick);
@@ -25,6 +30,8 @@ class Pig : public Entity {
 
  private:
   float elevationSpeed_;
+  bool isKicked_;
+  Texture shadow_;
 };
 
 #endif  // PIG_H
