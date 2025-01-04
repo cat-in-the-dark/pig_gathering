@@ -8,7 +8,7 @@
 #include "entities/player.h"
 #include "entities/truck.h"
 
-class ControlsScene : public hlam::Scene {
+class GameScene : public hlam::Scene {
   hlam::SceneManager* sm;
   Player player;
   Truck truck;
@@ -17,10 +17,10 @@ class ControlsScene : public hlam::Scene {
   Texture2D grass;
 
  public:
-  ControlsScene(hlam::SceneManager* sm);
+  GameScene(hlam::SceneManager* sm);
   void Activate() override;
   void Update(float dt) override;
   void Draw() override;
   void Exit() override;
-  ~ControlsScene();
+  ~GameScene();
 };

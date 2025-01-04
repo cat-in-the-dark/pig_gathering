@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "const.h"
-#include "scenes/controls_scene.h"
+#include "scenes/game_scene.h"
 #include "scenes/results_scene.h"
 
 #define HLAM_SCENE_IMPLEMENTATION
@@ -29,34 +29,9 @@ using namespace hlam;
 static RenderTexture2D canvas;
 static Viewport viewport = {kWindowWidth, kWindowHeight, Vector2{0, 0}};
 
-class GameScene : public Scene {
-  Timer timer = {2};
-  std::vector<Vector2> points = {{5, 5}, {5, 64}, {32, 90}, {64, 64}, {64, 5}};
-
- public:
-  void Activate() override {}
-  void Exit() override {}
-  void Update(float dt) override {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-      auto pos = GetMousePosition();
-      TraceLog(LOG_INFO, "BUM %f, %f", pos.x, pos.y);
-    }
-
-    timer.Update(GetFrameTime());
-  }
-  void Draw() override {
-    ClearBackground(BLACK);
-    if (timer.IsPassed()) {
-      DrawRectangle(40, 64, 100, 64, BLUE);
-    } else {
-      DrawRectangle(40, 64, 100, 64, GREEN);
-    }
-  }
-};
-
-void update(void *arg) {
+void update(void* arg) {
   float dt = GetFrameTime();
-  auto sm = reinterpret_cast<SceneManager *>(arg);
+  auto sm = reinterpret_cast<SceneManager*>(arg);
   // TODO: use pattern https://gameprogrammingpatterns.com/game-loop.html
   sm->Update(dt);
 
@@ -90,15 +65,13 @@ int main() {
       ->With<TextureScene>(LoadTexture("assets/logo.png"), 400, 240)
       ->With<KeyAwaitScene>(&sm, KEY_SPACE, "game");
 
-  sm.Register<ComboScene>("game")->With<GameScene>()->With<KeyAwaitScene>(&sm, KEY_SPACE, "test_collisions");
-
   sm.Register<TestKickScene>("test_kick");
 
-  sm.Register<ControlsScene>("controls_scene", &sm);
+  sm.Register<GameScene>("game", &sm);
 
   sm.Register<ComboScene>("results")->With<ResultsScene>(&gameState)->With<KeyAwaitScene>(&sm, KEY_SPACE, "game");
 
-  sm.Change("test_kick");
+  sm.Change("game");
 
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop_arg(update, &sm, 0, 1);

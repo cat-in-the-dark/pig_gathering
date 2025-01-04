@@ -1,4 +1,4 @@
-#include "controls_scene.h"
+#include "game_scene.h"
 
 #include <algorithm>
 
@@ -6,7 +6,7 @@
 
 using namespace hlam;
 
-ControlsScene::ControlsScene(SceneManager* sm)
+GameScene::GameScene(SceneManager* sm)
     : sm(sm),
       player(0, Vec2{kPlayerSpawnPosX, kPlayerSpawnPosY}, kPlayerSpeed),
       truck(Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}) {
@@ -16,17 +16,17 @@ ControlsScene::ControlsScene(SceneManager* sm)
   grass = LoadTextureFromImage(grassImg);
   UnloadImage(grassImg);
 }
-ControlsScene::~ControlsScene() {
+GameScene::~GameScene() {
   UnloadTexture(grass);
 }
 
-void ControlsScene::Activate() {
+void GameScene::Activate() {
   camera.offset = {kWindowHeight / 2, kWindowHeight / 2};
   camera.target = {0, 0};
   camera.rotation = 0;
   camera.zoom = 1;
 }
-void ControlsScene::Update(float dt) {
+void GameScene::Update(float dt) {
   truck.Update(dt);
   player.Update(dt);
 
@@ -37,7 +37,7 @@ void ControlsScene::Update(float dt) {
     sm->Change("results");
   }
 }
-void ControlsScene::Draw() {
+void GameScene::Draw() {
   BeginMode2D(camera);
   DrawRectangleLines(kPlayerPosLeft + 2, kPlayerPosUp + 2, kPlayerPosRight - 4, kPlayerPosDown - 4, RED);
 
@@ -54,4 +54,4 @@ void ControlsScene::Draw() {
 
   EndMode2D();
 }
-void ControlsScene::Exit() {}
+void GameScene::Exit() {}
