@@ -117,6 +117,13 @@ void GameScene::Update(float dt) {
       continue;
     }
 
+    auto truck_center_pos = truck.pos + truck.size / 2;
+    if (hlam::vec_dist_sqr(pig->pos, truck_center_pos) <
+        balance::kTruckInfluenceRadius * balance::kTruckInfluenceRadius) {
+      auto diff = pig->pos - truck_center_pos;
+      pig->pos += hlam::vec_norm(diff) * balance::kTruckInfluenceRadius * dt;
+    }
+
     for (auto& pig1 : pigs) {
       if (pig == pig1) {
         continue;
