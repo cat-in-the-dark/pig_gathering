@@ -9,7 +9,17 @@ using namespace hlam;
 ControlsScene::ControlsScene(SceneManager* sm)
     : sm(sm),
       player(0, Vec2{kPlayerSpawnPosX, kPlayerSpawnPosY}, kPlayerSpeed),
-      truck(Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}) {}
+      truck(Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}) {
+  auto grassImg = LoadImage("assets/grass-0001.png");
+  ImageFormat(&grassImg, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+  ImageColorInvert(&grassImg);
+  grass = LoadTextureFromImage(grassImg);
+  UnloadImage(grassImg);
+}
+ControlsScene::~ControlsScene() {
+  UnloadTexture(grass);
+}
+
 void ControlsScene::Activate() {
   camera.offset = {kWindowHeight / 2, kWindowHeight / 2};
   camera.target = {0, 0};
@@ -30,8 +40,18 @@ void ControlsScene::Update(float dt) {
 void ControlsScene::Draw() {
   BeginMode2D(camera);
   DrawRectangleLines(kPlayerPosLeft + 2, kPlayerPosUp + 2, kPlayerPosRight - 4, kPlayerPosDown - 4, RED);
+
+  for (int i = 0; i < kWorldPosRight / 16; i++) {
+    for (int j = 0; j < kWorldPosDown / 16; j++) {
+      if ((i + j) % 2 == 0) {
+        DrawTexture(grass, i * 16, j * 16, WHITE);
+      }
+    }
+  }
+
   truck.Draw();
   player.Draw();
+
   EndMode2D();
 }
 void ControlsScene::Exit() {}

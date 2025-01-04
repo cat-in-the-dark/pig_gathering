@@ -14,10 +14,13 @@ class ControlsScene : public hlam::Scene {
   Truck truck;
   Camera2D camera;
 
+  Texture2D grass;
+
  public:
   ControlsScene(hlam::SceneManager* sm);
   void Activate() override;
   void Update(float dt) override;
   void Draw() override;
   void Exit() override;
+  ~ControlsScene();
 };
