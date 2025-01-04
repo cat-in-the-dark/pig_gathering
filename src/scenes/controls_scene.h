@@ -6,13 +6,16 @@
 #include <HLAM/scene.h>
 
 #include "entities/player.h"
+#include "entities/truck.h"
 
 class ControlsScene : public hlam::Scene {
+  hlam::SceneManager* sm;
   Player player;
+  Truck truck;
   Camera2D camera;
 
  public:
-  ControlsScene();
+  ControlsScene(hlam::SceneManager* sm);
   void Activate() override;
   void Update(float dt) override;
   void Draw() override;

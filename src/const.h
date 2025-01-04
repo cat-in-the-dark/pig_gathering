@@ -16,3 +16,11 @@ constexpr float kPlayerPosLeft = kWorldPosLeft;
 constexpr float kPlayerPosRight = kWorldPosRight;
 constexpr float kPlayerPosUp = kWorldPosUp;
 constexpr float kPlayerPosDown = kWorldPosDown;
+
+constexpr float kPlayerSpawnPosX = 32;
+constexpr float kPlayerSpawnPosY = kWindowHeight - 48;
+
+constexpr float kTruckPosX = 32;
+constexpr float kTruckPosY = 32;
+constexpr float kTruckSpeedX = 8;
+constexpr float kTruckSpeedY = 0;

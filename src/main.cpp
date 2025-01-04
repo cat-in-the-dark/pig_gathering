@@ -4,6 +4,7 @@
 
 #include "const.h"
 #include "scenes/controls_scene.h"
+#include "scenes/results_scene.h"
 
 #define HLAM_SCENE_IMPLEMENTATION
 #include <HLAM/scene.h>
@@ -82,6 +83,7 @@ int main() {
   SetTextureFilter(canvas.texture, TEXTURE_FILTER_POINT);
 
   SceneManager sm;
+  GameState gameState;
 
   sm.Register<ComboScene>("title")
       ->With<TextureScene>(LoadTexture("assets/logo.png"), 400, 240)
@@ -91,7 +93,9 @@ int main() {
 
   sm.Register<TestKickScene>("test_kick");
 
-  sm.Register<ControlsScene>("controls_scene");
+  sm.Register<ControlsScene>("controls_scene", &sm);
+
+  sm.Register<ComboScene>("results")->With<ResultsScene>(&gameState)->With<KeyAwaitScene>(&sm, KEY_SPACE, "game");
 
   sm.Change("controls_scene");
 
