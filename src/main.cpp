@@ -62,11 +62,11 @@ void update(void* arg) {
     ClearBackground(BLACK);
     DrawText(TextFormat("SCENE '%s' NOT FOUND", sm->Current().c_str()), 0, 0, 32, RED);
   }
-  for (int gamepad = 0; gamepad < 4; gamepad++) {
-    if (IsGamepadAvailable(gamepad)) {
-      DrawText(TextFormat("GP%d: %s", gamepad, GetGamepadName(gamepad)), 8, 190 + 10 * (4 - gamepad), 10, WHITE);
-    }
-  }
+  // for (int gamepad = 0; gamepad < 4; gamepad++) {
+  //   if (IsGamepadAvailable(gamepad)) {
+  //     DrawText(TextFormat("GP%d: %s", gamepad, GetGamepadName(gamepad)), 8, 190 + 10 * (4 - gamepad), 10, WHITE);
+  //   }
+  // }
   EndTextureMode();
 
   // actual render in screen
