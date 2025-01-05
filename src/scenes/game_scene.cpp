@@ -57,15 +57,42 @@ void GameScene::Update(float dt) {
   hlam::Vec2 avgPos{0, 0};
   for (auto& player : players) {
     player->Update(dt);
-    avgPos += player->pos;
+    avgPos += player->pos / players.size();
   }
 
-  if (players.size() > 0) {
-    camera.target.x =
-        std::clamp(avgPos.x / players.size(), kWorldPosLeft + camera.offset.x, kWorldPosRight - camera.offset.x);
-    camera.target.y =
-        std::clamp(avgPos.y / players.size(), kWorldPosUp + camera.offset.y, kWorldPosDown - camera.offset.y);
+  if (players.size() == 1) {
+    // for 1 user smooth camera
+    float minSpeed = 128;
+    float minEffectLength = 128;
+    float fractionSpeed = 0.95f;
+
+    auto diff = hlam::Vec2{
+        players[0]->pos.x - camera.target.x,
+        players[0]->pos.y - camera.target.y,
+    };
+    auto len = hlam::vec_length(diff);
+    if (len > minEffectLength) {
+      float speed = fmaxf(fractionSpeed * len, minSpeed);
+      camera.target.x += diff.x * speed * dt / len;
+      camera.target.y += diff.y * speed * dt / len;
+    }
   }
+
+  if (players.size() > 1) {
+    // simple center of the screen if two users
+    camera.target.x = avgPos.x;
+    camera.target.y = avgPos.y;
+  }
+
+  if (players.size() == 2) {
+    auto diff = players[0]->pos - players[1]->pos;
+    auto scaleX = std::clamp(kWindowWidth / std::abs(diff.x), 0.5f, 1.0f);
+    auto scaleY = std::clamp(kWindowHeight / std::abs(diff.y), 0.5f, 1.0f);
+    camera.zoom = std::min(scaleX, scaleY);
+  }
+
+  camera.target.x = std::clamp(camera.target.x, kWorldPosLeft + camera.offset.x, kWorldPosRight - camera.offset.x);
+  camera.target.y = std::clamp(camera.target.y, kWorldPosUp + camera.offset.y, kWorldPosDown - camera.offset.y);
 
   if (truck.pos.x >= kWorldPosRight) {
     sm->Change("results");
