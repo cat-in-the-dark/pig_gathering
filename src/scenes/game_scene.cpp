@@ -79,10 +79,11 @@ void GameScene::Update(float dt) {
 
   for (auto& player : players) {
     // player - truck collisions
+    // TODO: make player rectangle here?
     if (CheckCollisionCircleRec(player->pos, player->physSize.x / 2, truckRect)) {
       auto nearestPoint = collision_point_circle_rectangle({player->pos, player->physSize.x / 2}, truckRect);
       auto diff = player->pos - nearestPoint;
-      player->pos = nearestPoint + hlam::vec_norm(diff) * player->physSize / 2;
+      player->pos = nearestPoint + hlam::vec_norm(diff) * player->physSize.x / 2;
     }
 
     // player - player collisions
@@ -116,26 +117,6 @@ void GameScene::Update(float dt) {
     }
   }
 
-  for (auto I = pigs.begin(); I != pigs.end();) {
-    auto& pig = *I;
-    if (pig->elevation > 0) {
-      I++;
-      continue;
-    }
-
-    // pig - truck collisions
-    if (CheckCollisionCircleRec(pig->pos, pig->size.x / 2, {truck.pos.x, truck.pos.y, truck.size.x, truck.size.y})) {
-      I = pigs.erase(I);
-      gameState->stats.pigs_gathered++;
-    } else {
-      I++;
-    }
-  }
-
-  auto truckCenterPos = truck.pos + truck.size / 2;
-  auto truckSoiTopleft = truckCenterPos - Truck::kTruckInfluence / 2;
-  auto truckSoiRect =
-      hlam::Rect{truckSoiTopleft.x, truckSoiTopleft.y, Truck::kTruckInfluence.x, Truck::kTruckInfluence.y};
   for (auto& pig : pigs) {
     if (pig->elevation > 0) {
       continue;
@@ -143,9 +124,9 @@ void GameScene::Update(float dt) {
 
     pig->pos = hlam::fit_in_bounds(pig->pos, pig->size, {kWorldPosLeft, kWorldPosUp, kWorldPosRight, kWorldPosDown});
 
-    // pig - truck SOI collisions
-    if (CheckCollisionCircleRec(pig->pos, pig->size.x / 2, truckSoiRect)) {
-      auto nearestPoint = collision_point_circle_rectangle({pig->pos, pig->size.x / 2}, truckSoiRect);
+    // pig - truck collisions
+    if (CheckCollisionCircleRec(pig->pos, pig->size.x / 2, truckRect)) {
+      auto nearestPoint = collision_point_circle_rectangle({pig->pos, pig->size.x / 2}, truckRect);
       auto diff = pig->pos - nearestPoint;
       pig->pos = nearestPoint + hlam::vec_norm(diff) * pig->size.x / 2;
     }
@@ -164,6 +145,23 @@ void GameScene::Update(float dt) {
         auto diff = pig1->pos - pig->pos;
         pig1->pos = pig->pos + hlam::vec_norm(diff) * (pig->size.x);
       }
+    }
+  }
+
+  for (auto I = pigs.begin(); I != pigs.end();) {
+    auto& pig = *I;
+    if (pig->elevation > 0) {
+      I++;
+      continue;
+    }
+
+    // pig - hopper collisions
+    auto hopper = truck.GetHopperRect();
+    if (CheckCollisionCircleRec(pig->pos, pig->size.x / 2, hopper)) {
+      I = pigs.erase(I);
+      gameState->stats.pigs_gathered++;
+    } else {
+      I++;
     }
   }
 

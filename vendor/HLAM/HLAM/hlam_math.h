@@ -32,7 +32,7 @@ inline bool operator!=(Vec2 a, Vec2 b) { return !operator==(a, b); }
 inline Vec2 operator+(Vec2 a) { return a; }
 inline Vec2 operator-(Vec2 a) { return {-a.x, -a.y}; }
 
-inline Vec2 operator+(Vec2 a, Vec2 b) { return {a.x + b.x, a.y + b.y}; }
+inline constexpr Vec2 operator+(Vec2 a, Vec2 b) { return {a.x + b.x, a.y + b.y}; }
 inline Vec2 operator-(Vec2 a, Vec2 b) { return {a.x - b.x, a.y - b.y}; }
 
 inline constexpr Vec2 operator*(Vec2 a, float scalar) { return {a.x * scalar, a.y * scalar}; }
