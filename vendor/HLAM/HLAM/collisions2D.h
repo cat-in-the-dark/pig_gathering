@@ -1,6 +1,7 @@
 #ifndef HLAM_COLLISIONS2D_H
 #define HLAM_COLLISIONS2D_H
 
+#include <algorithm>
 #include <cmath>
 
 #include "hlam_math.h"
@@ -121,10 +122,32 @@ inline bool collision_line_rect(const Vec2& p1, const Vec2& p2, const Rect& r) {
 }
 
 inline Vec2 collision_point_circle_rectangle(Circle circle, Rect rect) {
-  auto nearestX = std::clamp(circle.center.x, rect.x, rect.x + rect.width);
-  auto nearestY = std::clamp(circle.center.y, rect.y, rect.y + rect.height);
+  auto res = hlam::Vec2{std::clamp(circle.center.x, rect.x, rect.x + rect.width),
+                        std::clamp(circle.center.y, rect.y, rect.y + rect.height)};
 
-  return {nearestX, nearestY};
+  // Check if point is inside the rectangle
+  auto inside = res.x > rect.x && res.x < rect.x + rect.width && res.y > rect.y && res.y < rect.y + rect.height;
+  if (inside) {
+    // project the point on the edge
+    auto leftDist = res.x - rect.x;
+    auto rightDist = rect.x + rect.width - res.x;
+    auto topDist = res.y - rect.y;
+    auto bottomDist = rect.y + rect.width - res.y;
+
+    auto nearestDist = std::min({leftDist, rightDist, topDist, bottomDist});
+    // It should be OK to compare floats directly here as we just found minimum and didn't do any arithmetics on them
+    if (nearestDist == leftDist) {
+      res.x = rect.x;
+    } else if (nearestDist == rightDist) {
+      res.x = rect.x + rect.width;
+    } else if (nearestDist == topDist) {
+      res.y = rect.y;
+    } else if (nearestDist == bottomDist) {
+      res.y = rect.y + rect.height;
+    }
+  }
+
+  return res;
 }
 
 inline Vec2 fit_in_bounds(Vec2 pos, Vec2 size, Rect world) {

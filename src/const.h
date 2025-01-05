@@ -34,7 +34,6 @@ constexpr float kWolfChaseTriggerDist = 96;
 namespace balance {
 constexpr auto kPigsCount = 10;
 constexpr auto kickPower = 2.5f;
-constexpr auto kTruckInfluenceRadius = 50.0f;
 constexpr auto kPigEscaneVelocity = 5.0f;
 constexpr auto kPlayerEscaneVelocity = 10.0f;
 }  // namespace balance

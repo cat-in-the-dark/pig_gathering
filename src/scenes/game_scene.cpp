@@ -13,7 +13,7 @@ GameScene::GameScene(SceneManager* sm, GameState* gameState)
     : sm(sm),
       gameState(gameState),
       players(),
-      truck(Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}) {
+      truck(Vec2{kTruckPosX, kTruckPosY}, Truck::kTruck2Size, {kTruckSpeedX, kTruckSpeedY}) {
   auto grassImg = LoadImage("assets/grass-0001.png");
   ImageFormat(&grassImg, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
   ImageColorInvert(&grassImg);
@@ -132,6 +132,10 @@ void GameScene::Update(float dt) {
     }
   }
 
+  auto truckCenterPos = truck.pos + truck.size / 2;
+  auto truckSoiTopleft = truckCenterPos - Truck::kTruckInfluence / 2;
+  auto truckSoiRect =
+      hlam::Rect{truckSoiTopleft.x, truckSoiTopleft.y, Truck::kTruckInfluence.x, Truck::kTruckInfluence.y};
   for (auto& pig : pigs) {
     if (pig->elevation > 0) {
       continue;
@@ -139,12 +143,11 @@ void GameScene::Update(float dt) {
 
     pig->pos = hlam::fit_in_bounds(pig->pos, pig->size, {kWorldPosLeft, kWorldPosUp, kWorldPosRight, kWorldPosDown});
 
-    // pig - truck collisions
-    auto truck_center_pos = truck.pos + truck.size / 2;
-    if (hlam::vec_dist_sqr(pig->pos, truck_center_pos) <
-        balance::kTruckInfluenceRadius * balance::kTruckInfluenceRadius) {
-      auto diff = pig->pos - truck_center_pos;
-      pig->pos += hlam::vec_norm(diff) * balance::kTruckInfluenceRadius * dt;
+    // pig - truck SOI collisions
+    if (CheckCollisionCircleRec(pig->pos, pig->size.x / 2, truckSoiRect)) {
+      auto nearestPoint = collision_point_circle_rectangle({pig->pos, pig->size.x / 2}, truckSoiRect);
+      auto diff = pig->pos - nearestPoint;
+      pig->pos = nearestPoint + hlam::vec_norm(diff) * pig->size.x / 2;
     }
 
     // pig - pig collisions
