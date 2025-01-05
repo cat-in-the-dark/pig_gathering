@@ -99,9 +99,11 @@ void GameScene::ConnectPlayer() {
 }
 
 void GameScene::Update(float dt) {
+  if (players.size() > 0) {
+    gameState->stats.time += dt;
+  }
   ConnectPlayer();
   truck.Update(dt);
-  gameState->stats.time += dt;
   hlam::Vec2 avgPos{0, 0};
   for (auto& player : players) {
     player->Update(dt);
