@@ -33,4 +33,5 @@ class Player {
   void Draw();
   void Update(float dt);
   bool IsDashing() const;
+  void KickedPig();
 };

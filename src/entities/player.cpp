@@ -41,6 +41,13 @@ bool Player::IsDashing() const {
   return !dashAnim.IsPassed();
 }
 
+static bool IsGamepadActionPressed(int gamepad) {
+  return IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) ||
+         IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_UP) ||
+         IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) ||
+         IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT);
+}
+
 void Player::UpdateControls(float dt) {
   if (dashAnim.IsPassed()) {  // forbid moving in dash
     lastControlsDir.x = 0;
@@ -60,10 +67,17 @@ void Player::UpdateControls(float dt) {
     }
   }
 
-  if (IsKeyDown(key_dash) && dashCooldown.Invoke()) {
+  if ((IsKeyDown(key_dash) || IsGamepadActionPressed(index)) && dashCooldown.Invoke()) {
     dashAnim.Reset();
   }
 
   float speed = playerSpeed + dashPower * (1 - dashAnim.Percentage());
   playerSpeedVec = vec_norm(lastControlsDir) * speed * dt;
+}
+
+void Player::KickedPig() {
+  dashAnim.Finish();
+  if (IsGamepadAvailable(index)) {
+    SetGamepadVibration(index, 0.5, 0.5, 0.2);
+  }
 }

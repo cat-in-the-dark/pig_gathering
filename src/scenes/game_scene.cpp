@@ -184,7 +184,7 @@ void GameScene::Update(float dt) {
         auto diff = pig->pos - player->pos;
         if (player->IsDashing()) {
           pig->DoKick({hlam::vec_norm(diff), balance::kickPower});
-          player->dashAnim.Finish();
+          player->KickedPig();
         } else {
           pig->pos = player->pos + hlam::vec_norm(diff) * (pig->size.x / 2 + Player::physSize.x / 2);
         }
