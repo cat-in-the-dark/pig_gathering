@@ -6,9 +6,17 @@
 // raylib must be before
 #include <HLAM/hlam_math.h>
 
+#include "assets.h"
+
 using namespace hlam;
 
-Player::Player(int index, hlam::Vec2 pos, float playerSpeed) : index(index), pos(pos), playerSpeed(playerSpeed) {
+Player::Player(int index, hlam::Vec2 pos, float playerSpeed)
+    : idleAnim(playerIdleFrames, 0.5, true),
+      walkAnim(playerWalkFrames, 0.2, true),
+      currentAnim(&idleAnim),
+      index(index),
+      pos(pos),
+      playerSpeed(playerSpeed) {
   if (index == 0) {
     key_up = KEY_W;
     key_down = KEY_S;
@@ -25,13 +33,26 @@ Player::Player(int index, hlam::Vec2 pos, float playerSpeed) : index(index), pos
   }
 }
 void Player::Draw() {
-  DrawRectangleV(pos - physSize / 2, physSize, WHITE);
+  // DrawRectangleV(pos - physSize / 2, physSize, WHITE);
+  auto frame = currentAnim->GetFrame();
+  Rect src = {0, 0, static_cast<float>(frame.width) * dirX, static_cast<float>(frame.height)};
+  Rect dst = {pos.x - physSize.x / 2, pos.y - physSize.y / 2, static_cast<float>(frame.width),
+              static_cast<float>(frame.height)};
+
+  DrawTexturePro(frame, src, dst, Vector2{0, 0}, 0, WHITE);
 }
 void Player::Update(float dt) {
+  currentAnim->Update(dt);
   dashAnim.Update(dt);
   dashCooldown.Update(dt);
   UpdateControls(dt);
 
+  if (hlam::vec_length(playerSpeedVec) < 0.1) {
+    currentAnim = &idleAnim;
+  } else {
+    currentAnim = &walkAnim;
+    dirX = playerSpeedVec.x < 0 ? -1 : 1;
+  }
   pos += playerSpeedVec;
   pos.x = std::clamp(pos.x, kPlayerPosLeft, kPlayerPosRight);
   pos.y = std::clamp(pos.y, kPlayerPosUp, kPlayerPosDown);

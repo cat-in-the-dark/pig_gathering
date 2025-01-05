@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 // raylib must be before
+#include <HLAM/animations.h>
 #include <HLAM/coroutines.h>
 #include <HLAM/hlam_math.h>
 
@@ -18,6 +19,11 @@ class Player {
   hlam::Cooldown dashCooldown = {kDashCooldown};
   float dashPower = kDashPower;
   hlam::Vec2 lastControlsDir = {0, 0};
+
+  hlam::Animation idleAnim;
+  hlam::Animation walkAnim;
+  hlam::Animation* currentAnim;
+  float dirX = 1;
 
   void UpdateControls(float dt);
 
