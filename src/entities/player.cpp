@@ -11,8 +11,8 @@
 using namespace hlam;
 
 Player::Player(int index, hlam::Vec2 pos, float playerSpeed)
-    : idleAnim(playerIdleFrames, 0.5, true),
-      walkAnim(playerWalkFrames, 0.2, true),
+    : idleAnim(playerIdleFrames, 0.5f, true),
+      walkAnim(playerWalkFrames, 0.2f, true),
       currentAnim(&idleAnim),
       index(index),
       pos(pos),

@@ -260,7 +260,9 @@ void GameScene::Update(float dt) {
         pig1->pos = pig->pos + hlam::vec_norm(diff) * (pig->size.x);
       }
     }
+  }
 
+  for (const auto& pig : pigs) {
     pig->Update(dt);
   }
 
