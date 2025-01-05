@@ -75,7 +75,6 @@ void GameScene::Update(float dt) {
   std::sort(players.begin(), players.end(),
             [](const auto& p1, const auto& p2) { return p1->IsDashing() && !p2->IsDashing(); });
 
-  auto truckCenter = truck.pos + truck.size / 2;
   auto truckRect = Rect{truck.pos.x, truck.pos.y, truck.size.x, truck.size.y};
 
   for (auto& player : players) {
