@@ -115,12 +115,12 @@ void KickedWolfBehaviour::Update(float dt) {
 
 Wolf::Wolf(hlam::Vec2 pos, hlam::Vec2 size, float speed, float runSpeed)
     : behaviours(),
+      shadow_(generateShadow(size.x)),
       pos(pos),
       size(size),
       speed(speed),
       runSpeed(runSpeed),
-      closestPig(nullptr),
-      shadow_(generateShadow(size.x)) {
+      closestPig(nullptr) {
   behaviours.emplace(IDLE, std::make_unique<IdleWolfBehaviour>(this));
   behaviours.emplace(CHASE, std::make_unique<ChaseWolfBehaviour>(this));
   behaviours.emplace(WANDER, std::make_unique<WanderWolfBehaviour>(this));
