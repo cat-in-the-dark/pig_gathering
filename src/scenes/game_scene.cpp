@@ -50,6 +50,8 @@ void GameScene::Activate() {
   camera.rotation = 0;
   camera.zoom = 1;
   pigs = spawnPigs();
+  wolfs.clear();
+  players.clear();
 }
 void GameScene::ConnectPlayer() {
   if (players.size() == 2) {
