@@ -67,7 +67,7 @@ void GameScene::Update(float dt) {
         std::clamp(avgPos.y / players.size(), kWorldPosUp + camera.offset.y, kWorldPosDown - camera.offset.y);
   }
 
-  if (truck.pos.x >= kWindowWidth) {
+  if (truck.pos.x >= kWorldPosRight) {
     sm->Change("results");
   }
 
