@@ -207,7 +207,6 @@ void GameScene::Update(float dt) {
 
     // player - pig collisions
     for (auto& pig : pigs) {
-      pig->Update(dt);
       // player collides with kidnapped pigs
       if (pig->GetState() == Pig::State::KICKED || pig->isDead) {
         continue;
