@@ -9,3 +9,5 @@ extern std::vector<Texture2D> playerIdleFrames;
 extern std::vector<Texture2D> playerWalkFrames;
 extern std::vector<Texture2D> pigIdleFrames;
 extern Texture2D pigDamagedFrame;
+
+extern std::vector<Sound> pigKickFXs;

@@ -17,7 +17,8 @@ Pig::Pig(hlam::Vec2 pos)
       anim(pigIdleFrames, 1.0f, true),
       elevationSpeed_(0.0f),
       state_(State::IDLE),
-      shadow_(generateShadow(Pig::pigWitdh / 2.0f)) {
+      shadow_(generateShadow(Pig::pigWitdh / 2.0f)),
+      pigSoundVariant(GetRandomValue(0, pigKickFXs.size() - 1)) {
   // do desync pigs
   anim.time = GetRandomValue(0, 60) / 60.0f;
 }
@@ -32,6 +33,8 @@ void Pig::DoKick(Kick kick) {
 
   speed = kick.dir * horizontalSpeed;
   state_ = State::KICKED;
+
+  PlaySound(pigKickFXs[pigSoundVariant]);
 }
 
 void Pig::Update(float dt) {

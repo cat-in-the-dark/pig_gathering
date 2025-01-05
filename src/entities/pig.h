@@ -46,6 +46,7 @@ class Pig : public Entity {
   float elevationSpeed_;
   State state_;
   Texture shadow_;
+  int pigSoundVariant = 0;
 };
 
 #endif  // PIG_H

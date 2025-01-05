@@ -37,7 +37,7 @@ constexpr auto kMaxWolfCount = 3;
 constexpr float kWolfSpawnCooldownTime = 5;
 
 namespace balance {
-constexpr auto kPigsCount = 10;
+constexpr auto kPigsCount = 16;
 constexpr auto kickPower = 2.5f;
 constexpr auto kKickAngle = PI / 4;
 constexpr auto kPigEscaneVelocity = 5.0f;
