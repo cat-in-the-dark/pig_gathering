@@ -133,12 +133,15 @@ void GameScene::Update(float dt) {
     }
   }
 
-  // pig - pig collisions
   for (auto& pig : pigs) {
     if (pig->elevation > 0) {
       continue;
     }
 
+    pig->pos = hlam::fit_in_bounds(pig->pos, {static_cast<float>(pig->width), static_cast<float>(pig->height)},
+                                   {kWorldPosLeft, kWorldPosUp, kWorldPosRight, kWorldPosDown});
+
+    // pig - truck collisions
     auto truck_center_pos = truck.pos + truck.size / 2;
     if (hlam::vec_dist_sqr(pig->pos, truck_center_pos) <
         balance::kTruckInfluenceRadius * balance::kTruckInfluenceRadius) {
@@ -146,6 +149,7 @@ void GameScene::Update(float dt) {
       pig->pos += hlam::vec_norm(diff) * balance::kTruckInfluenceRadius * dt;
     }
 
+    // pig - pig collisions
     for (auto& pig1 : pigs) {
       if (pig == pig1) {
         continue;

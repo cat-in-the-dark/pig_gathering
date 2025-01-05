@@ -126,6 +126,22 @@ inline Vec2 collision_point_circle_rectangle(Circle circle, Rect rect) {
 
   return {nearestX, nearestY};
 }
+
+inline Vec2 fit_in_bounds(Vec2 pos, Vec2 size, Rect world) {
+  if (pos.x + size.x / 2 > world.width) {
+    pos.x = world.width - size.x / 2;
+  } else if (pos.x - size.x / 2 < world.x) {
+    pos.x = world.x + size.x / 2;
+  }
+
+  if (pos.y + size.y / 2 > world.height) {
+    pos.y = world.height - size.y / 2;
+  } else if (pos.y - size.y / 2 < world.y) {
+    pos.y = world.y + size.y / 2;
+  }
+
+  return pos;
+}
 }  // namespace hlam
 
 #endif  // HLAM_COLLISIONS2D_H

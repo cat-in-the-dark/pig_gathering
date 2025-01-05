@@ -85,10 +85,10 @@ void Pig::Update(float dt) {
     } else {
       // Check world boundaries
       auto newPos = pos + speed;
-      if (newPos.x > kWorldPosRight || newPos.x < kWorldPosLeft) {
+      if (newPos.x + pigWitdh > kWorldPosRight || newPos.x - pigWitdh < kWorldPosLeft) {
         speed.x *= -1;
       }
-      if (newPos.y > kWorldPosDown || newPos.y < kWorldPosUp) {
+      if (newPos.y + pigHeight > kWorldPosDown || newPos.y - pigHeight < kWorldPosUp) {
         speed.y *= -1;
       }
     }
