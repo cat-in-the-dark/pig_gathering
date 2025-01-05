@@ -175,7 +175,8 @@ void GameScene::Update(float dt) {
     // player - pig collisions
     for (auto& pig : pigs) {
       pig->Update(dt);
-      if (pig->GetState() != Pig::State::IDLE) {
+      // player collides with kidnapped pigs
+      if (pig->GetState() == Pig::State::KICKED || pig->isDead) {
         continue;
       }
 
@@ -230,7 +231,7 @@ void GameScene::Update(float dt) {
   }
 
   for (auto& wolf : wolfs) {
-    if (wolf->closestPig == nullptr || wolf->closestPig->isDead) {
+    if (wolf->closestPig == nullptr || wolf->closestPig->GetState() == Pig::State::KICKED || wolf->closestPig->isDead) {
       // TODO: or pig is dead/gathered...
       Pig* closestPig = nullptr;
       float closestPigDist = 100000000;

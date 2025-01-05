@@ -13,7 +13,7 @@ void KidnapWolfBehaviour::Update(float dt) {
   auto dir = target - wolf->pos;
   auto move = hlam::vec_norm(dir) * (wolf->speed * dt);
   wolf->pos += move;
-  if (wolf->closestPig != nullptr) {
+  if (wolf->closestPig != nullptr && wolf->closestPig->GetState() == Pig::State::KIDNAPPED) {
     wolf->closestPig->pos += move;
   } else {
     wolf->ChangeState(IDLE);
