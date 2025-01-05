@@ -12,3 +12,5 @@ extern Texture2D pigDamagedFrame;
 
 extern std::vector<Sound> pigKickFXs;
 extern Sound wolfKickFX;
+extern std::vector<Texture2D> wolfIdleFrames;
+extern std::vector<Texture2D> wolfWalkFrames;
