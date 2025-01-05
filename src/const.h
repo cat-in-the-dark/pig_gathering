@@ -1,7 +1,9 @@
 #pragma once
 
-constexpr auto kWindowWidth = 400;
-constexpr auto kWindowHeight = 240;
+constexpr auto kCanvasWidth = 400;
+constexpr auto kCanvasHeight = 240;
+constexpr auto kWindowWidth = kCanvasWidth * 2;
+constexpr auto kWindowHeight = kCanvasHeight * 2;
 constexpr auto kPlayerSpeed = 128.0f;
 constexpr auto kDashTime = 0.2f;
 constexpr auto kDashCooldown = kDashTime * 2;
@@ -10,7 +12,7 @@ constexpr auto kDashPower = kPlayerSpeed * 4;
 constexpr float kWorldPosLeft = 0;
 constexpr float kWorldPosRight = 800;
 constexpr float kWorldPosUp = 0;
-constexpr float kWorldPosDown = kWindowHeight + 64;
+constexpr float kWorldPosDown = kCanvasHeight + 64;
 
 constexpr float kPlayerPosLeft = kWorldPosLeft;
 constexpr float kPlayerPosRight = kWorldPosRight;
@@ -18,7 +20,7 @@ constexpr float kPlayerPosUp = kWorldPosUp;
 constexpr float kPlayerPosDown = kWorldPosDown;
 
 constexpr float kPlayerSpawnPosX = 32;
-constexpr float kPlayerSpawnPosY = kWindowHeight - 48;
+constexpr float kPlayerSpawnPosY = kCanvasHeight - 48;
 
 constexpr float kTruckPosX = 32;
 constexpr float kTruckPosY = 32;

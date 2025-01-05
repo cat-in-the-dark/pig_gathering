@@ -45,7 +45,7 @@ auto spawnPigs() {
 void GameScene::Activate() {
   truck = {Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}};
   gameState->stats = {};
-  camera.offset = {kWindowWidth / 2, kWindowHeight / 2};
+  camera.offset = {kCanvasWidth / 2, kCanvasHeight / 2};
   camera.target = {0, 0};
   camera.rotation = 0;
   camera.zoom = 1;
@@ -86,8 +86,8 @@ void GameScene::Update(float dt) {
 
   if (players.size() == 2) {
     auto diff = players[0]->pos - players[1]->pos;
-    auto scaleX = std::clamp(kWindowWidth / std::abs(diff.x), 0.5f, 1.0f);
-    auto scaleY = std::clamp(kWindowHeight / std::abs(diff.y), 0.5f, 1.0f);
+    auto scaleX = std::clamp(kCanvasWidth / std::abs(diff.x), 0.5f, 1.0f);
+    auto scaleY = std::clamp(kCanvasHeight / std::abs(diff.y), 0.5f, 1.0f);
     camera.zoom = std::min(scaleX, scaleY);
   }
 

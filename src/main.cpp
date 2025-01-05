@@ -27,9 +27,20 @@
 using namespace hlam;
 
 static RenderTexture2D canvas;
-static Viewport viewport = {kWindowWidth, kWindowHeight, Vector2{0, 0}};
+static Viewport viewport = {kCanvasWidth, kCanvasHeight, Vector2{0, 0}};
 
 void update(void* arg) {
+  if (IsKeyPressed(KEY_F)) {
+    if (IsWindowFullscreen()) {
+      SetWindowSize(kWindowWidth, kWindowHeight);
+    } else {
+      int display = GetCurrentMonitor();
+      SetWindowSize(GetMonitorWidth(display), GetMonitorHeight(display));
+    }
+
+    ToggleFullscreen();
+  }
+
   float dt = GetFrameTime();
   auto sm = reinterpret_cast<SceneManager*>(arg);
   // TODO: use pattern https://gameprogrammingpatterns.com/game-loop.html
