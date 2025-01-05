@@ -107,6 +107,21 @@ class KeyAwaitScene : public Scene {
   void Exit();
 };
 
+class DelayedKeyAwaitScene : public Scene {
+  SceneManager* sm;
+  int key;
+  float delay;
+  std::string next;
+  float time;
+
+ public:
+  DelayedKeyAwaitScene(SceneManager* sm, float delay, int key, std::string next);
+  void Activate();
+  void Update(float dt);
+  void Draw();
+  void Exit();
+};
+
 }  // namespace hlam
 
 #endif /* HLAM_SCENE_H */
@@ -187,6 +202,21 @@ void KeyAwaitScene::Update(float dt) {
 }
 void KeyAwaitScene::Draw() {}
 void KeyAwaitScene::Exit() {}
+
+DelayedKeyAwaitScene::DelayedKeyAwaitScene(SceneManager* sm, float delay, int key, std::string next)
+    : sm(sm), key(key), delay(delay), next(next), time(0) {}
+
+inline void DelayedKeyAwaitScene::Activate() { time = 0; }
+inline void DelayedKeyAwaitScene::Update(float dt) {
+  time += dt;
+  if (time > delay) {
+    if (GetKeyPressed() == key) {
+      sm->Change(next);
+    }
+  }
+}
+void DelayedKeyAwaitScene::Draw() {}
+void DelayedKeyAwaitScene::Exit() {}
 
 TextureScene::TextureScene(Texture2D tex, int width, int height) : tex(tex), width(width), height(height) {}
 void TextureScene::Activate() {}

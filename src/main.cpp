@@ -97,7 +97,9 @@ int main() {
 
   sm.Register<GameScene>("game", &sm, &gameState);
 
-  sm.Register<ComboScene>("results")->With<ResultsScene>(&gameState)->With<KeyAwaitScene>(&sm, KEY_SPACE, "game");
+  sm.Register<ComboScene>("results")
+      ->With<ResultsScene>(&gameState)
+      ->With<DelayedKeyAwaitScene>(&sm, 1.0f, KEY_SPACE, "game");
 
   sm.Change("game");
 
