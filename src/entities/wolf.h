@@ -6,7 +6,9 @@
 #include <memory>
 #include <unordered_map>
 
-enum WolfState { IDLE, WANDER, CHASE, KIDNAPPING };
+#include "kick.h"
+
+enum WolfState { IDLE, WANDER, CHASE, KIDNAPPING, KICKED };
 
 class WolfBehaviour {
  public:
@@ -54,24 +56,45 @@ class KidnapWolfBehaviour : public WolfBehaviour {
   void Update(float dt) override;
 };
 
+class KickedWolfBehaviour : public WolfBehaviour {
+  Wolf* wolf;
+
+ public:
+  KickedWolfBehaviour(Wolf* wolf);
+  void Update(float dt) override;
+};
+
+struct KickState {
+  float elevation;
+  float elevationSpeed;
+  hlam::Vec2 kickSpeed;
+};
+
 class Pig;
 class Wolf {
   WolfState nextState = IDLE;
   WolfState state = IDLE;
   std::unordered_map<WolfState, std::unique_ptr<WolfBehaviour>> behaviours;
   bool die_ = false;
+  Texture shadow_;
 
  public:
   hlam::Vec2 pos;
   hlam::Vec2 size;
   float speed;
   float runSpeed;
+  KickState kickState{};
 
   Pig* closestPig;
 
   Wolf(hlam::Vec2 pos, hlam::Vec2 size, float speed, float runSpeed);
+  virtual ~Wolf();
   void Update(float dt);
   void Draw();
+  WolfState GetState() const {
+    return state;
+  }
+  void DoKick(Kick kick);
   void ChangeState(WolfState state);
   bool IsDead() const {
     return die_;

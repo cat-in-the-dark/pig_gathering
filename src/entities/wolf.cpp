@@ -1,6 +1,9 @@
 #include "wolf.h"
 
+#include <HLAM/hlam_math.h>
+
 #include "const.h"
+#include "helpers/texture_helper.h"
 #include "pig.h"
 
 WolfBehaviour::~WolfBehaviour() = default;
@@ -14,7 +17,11 @@ void KidnapWolfBehaviour::Update(float dt) {
   auto move = hlam::vec_norm(dir) * (wolf->speed * dt);
   wolf->pos += move;
   if (wolf->closestPig != nullptr && wolf->closestPig->GetState() == Pig::State::KIDNAPPED) {
-    wolf->closestPig->pos += move;
+    if (hlam::vec_dist(wolf->pos, wolf->closestPig->pos) > wolf->size.x / 2 + wolf->closestPig->size.x / 2) {
+      wolf->closestPig->Release();
+    } else {
+      wolf->closestPig->pos += move;
+    }
   } else {
     wolf->ChangeState(IDLE);
   }
@@ -88,16 +95,53 @@ void WanderWolfBehaviour::Update(float dt) {
   }
 }
 
+KickedWolfBehaviour::KickedWolfBehaviour(Wolf* wolf) : wolf(wolf) {}
+
+void KickedWolfBehaviour::Update(float dt) {
+  auto timeScale = dt * 3;
+
+  auto& st = wolf->kickState;
+  st.elevation += st.elevationSpeed * timeScale;
+  st.elevationSpeed -= physics::gravityAcceleration * timeScale;
+
+  // FIXME: this was added to balance out previous bug. Please fix it along with dt * 3
+  wolf->pos += st.kickSpeed;
+
+  if (st.elevation < 0.0f) {
+    wolf->ChangeState(IDLE);
+    st = {};
+  }
+}
+
 Wolf::Wolf(hlam::Vec2 pos, hlam::Vec2 size, float speed, float runSpeed)
-    : behaviours(), pos(pos), size(size), speed(speed), runSpeed(runSpeed), closestPig(nullptr) {
+    : behaviours(),
+      pos(pos),
+      size(size),
+      speed(speed),
+      runSpeed(runSpeed),
+      closestPig(nullptr),
+      shadow_(generateShadow(size.x)) {
   behaviours.emplace(IDLE, std::make_unique<IdleWolfBehaviour>(this));
   behaviours.emplace(CHASE, std::make_unique<ChaseWolfBehaviour>(this));
   behaviours.emplace(WANDER, std::make_unique<WanderWolfBehaviour>(this));
   behaviours.emplace(KIDNAPPING, std::make_unique<KidnapWolfBehaviour>(this));
+  behaviours.emplace(KICKED, std::make_unique<KickedWolfBehaviour>(this));
+}
+
+Wolf::~Wolf() {
+  UnloadTexture(shadow_);
 }
 
 void Wolf::ChangeState(WolfState stateToChange) {
   nextState = stateToChange;
+}
+
+void Wolf::DoKick(Kick kick) {
+  kickState.elevationSpeed = kick.impulse * sinf(balance::kKickAngle);
+  auto horizontalSpeed = kick.impulse * cosf(balance::kKickAngle);
+
+  kickState.kickSpeed = kick.dir * horizontalSpeed;
+  ChangeState(KICKED);
 }
 
 void Wolf::Update(float dt) {
@@ -121,7 +165,9 @@ void Wolf::Update(float dt) {
   }
 
   if (pos.x >= kWorldPosRight || pos.y >= kWorldPosDown || pos.y <= kWorldPosUp || pos.x <= kWorldPosLeft) {
-    die_ = true;
+    if (state != KICKED) {
+      die_ = true;
+    }
     if (closestPig != nullptr) {
       closestPig->isDead = true;
     }
@@ -129,5 +175,17 @@ void Wolf::Update(float dt) {
 }
 
 void Wolf::Draw() {
-  DrawCircleV(pos, (size.x + size.y) / 2, RED);
+  // FIXME: fix speed increment and remove elevation multiplier
+  auto drawPos = pos;
+  if (state == KICKED) {
+    hlam::Vec2 drawDelta = size / 2.0f;
+    auto shadowYOffset = hlam::Vec2{0.0f, -size.x / 2};
+
+    hlam::Vec2 elevatedDelta = {0, -kickState.elevation * 50};
+    drawPos += elevatedDelta;
+
+    DrawTextureV(shadow_, pos - drawDelta + shadowYOffset, WHITE);
+  }
+
+  DrawCircleV(drawPos, (size.x + size.y) / 2, RED);
 }

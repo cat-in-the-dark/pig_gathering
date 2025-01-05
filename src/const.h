@@ -39,6 +39,16 @@ constexpr float kWolfSpawnCooldownTime = 5;
 namespace balance {
 constexpr auto kPigsCount = 10;
 constexpr auto kickPower = 2.5f;
+constexpr auto kKickAngle = PI / 4;
 constexpr auto kPigEscaneVelocity = 5.0f;
 constexpr auto kPlayerEscaneVelocity = 10.0f;
 }  // namespace balance
+
+namespace physics {
+constexpr auto epsilon = 0.0001f;
+constexpr auto pixelsInMeter = 8.0f;
+
+constexpr auto gravityAcceleration = 9.8f / pixelsInMeter;
+constexpr auto airFriction = 0.03f * pixelsInMeter;
+constexpr auto groundFriction = 10.0f * pixelsInMeter;
+}  // namespace physics

@@ -176,6 +176,35 @@ void GameScene::Update(float dt) {
       }
     }
 
+    // player - wolf collision
+    for (auto& wolf : wolfs) {
+      if (CheckCollisionCircles(wolf->pos, wolf->size.x / 2, player->pos, Player::physSize.x / 2)) {
+        auto diff = wolf->pos - player->pos;
+        if (player->IsDashing()) {
+          constexpr auto kickSpreadAngle = PI / 2;
+          auto kickDir = atan2(diff.y, diff.x);
+          auto wolfKickDir = kickDir;
+          bool kickPig = false;
+          if (wolf->GetState() == KIDNAPPING && wolf->closestPig != nullptr) {
+            kickPig = true;
+            wolfKickDir += kickSpreadAngle / 2;
+          }
+
+          if (kickPig) {
+            auto pigKickDir = kickDir - kickSpreadAngle / 2;
+            auto pigKickVec = hlam::Vec2{cosf(pigKickDir), sinf(pigKickDir)};
+            wolf->closestPig->DoKick({pigKickVec, balance::kickPower});
+          }
+
+          auto wolfKickVec = hlam::Vec2{cosf(wolfKickDir), sinf(wolfKickDir)};
+          wolf->DoKick({wolfKickVec, balance::kickPower});
+          player->KickedPig();
+        } else {
+          wolf->pos = player->pos + hlam::vec_norm(diff) * (wolf->size.x / 2 + Player::physSize.x / 2);
+        }
+      }
+    }
+
     // player - pig collisions
     for (auto& pig : pigs) {
       pig->Update(dt);
@@ -232,6 +261,8 @@ void GameScene::Update(float dt) {
         pig1->pos = pig->pos + hlam::vec_norm(diff) * (pig->size.x);
       }
     }
+
+    pig->Update(dt);
   }
 
   for (auto& wolf : wolfs) {

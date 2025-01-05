@@ -6,32 +6,7 @@
 #include <algorithm>
 
 #include "const.h"
-
-constexpr auto epsilon = 0.0001f;
-constexpr auto pixelsInMeter = 8.0f;
-
-constexpr auto kickAngle = PI / 4;
-
-constexpr auto gravityAcceleration = 9.8f / pixelsInMeter;
-constexpr auto airFriction = 0.03f * pixelsInMeter;
-constexpr auto groundFriction = 10.0f * pixelsInMeter;
-
-constexpr hlam::Vec2 shadowYOffset = {0.0f, 10.0f};
-
-Texture generateShadow() {
-  auto radius = Pig::pigWitdh / 2.0f;
-  auto img = GenImageDither(radius * 2, radius * 2, BLACK, WHITE, 4);
-  auto mask = GenImageColor(radius * 2, radius * 4, {0, 0, 0, 0});
-  // TODO: ellipse
-  ImageDrawCircle(&mask, radius, radius, radius, WHITE);
-  ImageResizeNN(&mask, radius * 2, radius * 2);
-  ImageAlphaMask(&img, mask);
-  ClearAlphaColor(img, BLACK);
-  auto res = LoadTextureFromImage(img);
-  UnloadImage(img);
-  UnloadImage(mask);
-  return res;
-}
+#include "helpers/texture_helper.h"
 
 Pig::Pig(hlam::Vec2 pos)
     : Entity(pos, pigSize),
@@ -40,15 +15,15 @@ Pig::Pig(hlam::Vec2 pos)
       isDead(false),
       elevationSpeed_(0.0f),
       state_(State::IDLE),
-      shadow_(generateShadow()) {}
+      shadow_(generateShadow(Pig::pigWitdh / 2.0f)) {}
 
 Pig::~Pig() {
   UnloadTexture(shadow_);
 }
 
 void Pig::DoKick(Kick kick) {
-  elevationSpeed_ = kick.impulse * sinf(kickAngle);
-  auto horizontalSpeed = kick.impulse * cosf(kickAngle);
+  elevationSpeed_ = kick.impulse * sinf(balance::kKickAngle);
+  auto horizontalSpeed = kick.impulse * cosf(balance::kKickAngle);
 
   speed = kick.dir * horizontalSpeed;
   state_ = State::KICKED;
@@ -63,7 +38,7 @@ void Pig::Update(float dt) {
   if (state_ == State::KICKED) {
     if (elevation >= 0.0f) {
       elevation += elevationSpeed_ * dt;
-      elevationSpeed_ -= gravityAcceleration * dt;
+      elevationSpeed_ -= physics::gravityAcceleration * dt;
     }
 
     if (elevation < 0.0f) {
@@ -75,9 +50,9 @@ void Pig::Update(float dt) {
 
   // horizontal update
   if (hlam::vec_length_sqr(speed) > 0.0f) {
-    auto friction = groundFriction * dt;
+    auto friction = physics::groundFriction * dt;
     if (elevation > 0.0f) {
-      friction = airFriction * dt;
+      friction = physics::airFriction * dt;
     }
 
     auto dir = atan2f(speed.y, speed.x);
@@ -85,7 +60,7 @@ void Pig::Update(float dt) {
 
     // check if friction overshoot
     auto newDir = atan2f(speed.y, speed.x);
-    if (fabsf(dir - newDir) > epsilon) {
+    if (fabsf(dir - newDir) > physics::epsilon) {
       speed = {0, 0};
     } else {
       // Check world boundaries
@@ -99,6 +74,7 @@ void Pig::Update(float dt) {
     }
   }
 
+  // FIXME: this was added to balance out previous bug. Please fix it along with dt * 3
   pos += speed;
 }
 
@@ -106,6 +82,8 @@ void Pig::Draw() {
   if (isDead) {
     return;
   }
+
+  auto shadowYOffset = hlam::Vec2{0.0f, -size.x / 2};
 
   if (elevation > 0) {
     DrawTextureV(shadow_, pos - drawDelta + shadowYOffset, WHITE);

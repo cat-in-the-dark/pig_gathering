@@ -8,7 +8,7 @@ inline bool operator==(const Color &c1, const Color &c2) {
   return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a;
 }
 
-Image GenImageDither(int width, int height, Color col1, Color col2, int fill_nth) {
+inline Image GenImageDither(int width, int height, Color col1, Color col2, int fill_nth) {
   Color *pixels = (Color *) RL_MALLOC(width * height * sizeof(Color));
 
   for (int y = 0; y < height; y++) {
@@ -24,7 +24,7 @@ Image GenImageDither(int width, int height, Color col1, Color col2, int fill_nth
   return {pixels, width, height, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8};
 }
 
-void ClearAlphaColor(Image &image, Color color) {
+inline void ClearAlphaColor(Image &image, Color color) {
   if (image.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) {
     auto *pixels = reinterpret_cast<Color *>(image.data);
     for (int y = 0; y < image.width; y++) {

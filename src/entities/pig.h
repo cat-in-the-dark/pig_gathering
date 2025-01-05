@@ -2,13 +2,7 @@
 #define PIG_H
 
 #include "entity.h"
-
-struct Kick {
-  // normalized direction vector
-  hlam::Vec2 dir;
-
-  float impulse;
-};
+#include "kick.h"
 
 class Pig : public Entity {
  public:
@@ -32,6 +26,10 @@ class Pig : public Entity {
   virtual void Update(float dt) override;
 
   virtual void Draw() override;
+
+  void Release() {
+    state_ = State::IDLE;
+  }
 
   State GetState() const {
     return state_;

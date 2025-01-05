@@ -103,6 +103,10 @@ inline Vec2 vec_norm(const Vec2 &v) {
   return result;
 }
 
+inline float vec_dist(const Vec2 &v1, const Vec2 &v2) {
+  return sqrt((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
+}
+
 inline float vec_dist_sqr(const Vec2 &v1, const Vec2 &v2) {
   return ((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
 }
