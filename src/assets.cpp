@@ -18,6 +18,7 @@ void LoadAssets() {
   pigDamagedFrame = LoadTexture("assets/pig_damaged.png");
   pigKickFXs.push_back(LoadSound("assets/fx_pig_kick_1.wav"));
   pigKickFXs.push_back(LoadSound("assets/fx_pig_kick_2.wav"));
+  wolfKickFX = LoadSound("assets/fx_uwu.wav");
 }
 
 std::vector<Texture2D> truckTex;
@@ -26,3 +27,4 @@ std::vector<Texture2D> playerWalkFrames;
 std::vector<Texture2D> pigIdleFrames;
 Texture2D pigDamagedFrame;
 std::vector<Sound> pigKickFXs;
+Sound wolfKickFX;

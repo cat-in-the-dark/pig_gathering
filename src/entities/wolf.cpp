@@ -2,6 +2,7 @@
 
 #include <HLAM/hlam_math.h>
 
+#include "assets.h"
 #include "const.h"
 #include "helpers/texture_helper.h"
 #include "pig.h"
@@ -97,6 +98,9 @@ void WanderWolfBehaviour::Update(float dt) {
 
 KickedWolfBehaviour::KickedWolfBehaviour(Wolf* wolf) : wolf(wolf) {}
 
+void KickedWolfBehaviour::Activate() {
+  PlaySound(wolfKickFX);
+}
 void KickedWolfBehaviour::Update(float dt) {
   auto timeScale = dt * 3;
 

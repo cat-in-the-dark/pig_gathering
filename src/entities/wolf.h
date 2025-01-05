@@ -61,6 +61,7 @@ class KickedWolfBehaviour : public WolfBehaviour {
 
  public:
   KickedWolfBehaviour(Wolf* wolf);
+  void Activate() override;
   void Update(float dt) override;
 };
 
