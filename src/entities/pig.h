@@ -12,6 +12,8 @@ struct Kick {
 
 class Pig : public Entity {
  public:
+  enum class State { IDLE, KICKED, KIDNAPPED };
+
   static constexpr auto pigWitdh = 24.0f;
   static constexpr auto pigHeight = 24.0f;
   static constexpr hlam::Vec2 pigSize = {pigWitdh, pigHeight};
@@ -19,6 +21,7 @@ class Pig : public Entity {
 
   hlam::Vec2 speed;
   float elevation;
+  bool isDead;
 
   explicit Pig(hlam::Vec2 pos);
 
@@ -30,15 +33,15 @@ class Pig : public Entity {
 
   virtual void Draw() override;
 
-  bool isKicked() const {
-    return isKicked_;
+  State GetState() const {
+    return state_;
   }
 
   void Kidnapped();
 
  private:
   float elevationSpeed_;
-  bool isKicked_;
+  State state_;
   Texture shadow_;
 };
 

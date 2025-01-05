@@ -38,7 +38,8 @@ Pig::Pig(hlam::Vec2 pos)
       speed{0, 0},
       elevation(0),
       elevationSpeed_(0.0f),
-      isKicked_(false),
+      isDead(false),
+      state_(State::IDLE),
       shadow_(generateShadow()) {}
 
 Pig::~Pig() {
@@ -50,19 +51,23 @@ void Pig::DoKick(Kick kick) {
   auto horizontalSpeed = kick.impulse * cosf(kickAngle);
 
   speed = kick.dir * horizontalSpeed;
-  isKicked_ = true;
+  state_ = State::KICKED;
 }
 
 void Pig::Update(float dt) {
+  if (isDead) {
+    return;
+  }
+
   dt *= 3;
-  if (isKicked_) {
+  if (state_ == State::KICKED) {
     if (elevation >= 0.0f) {
       elevation += elevationSpeed_ * dt;
       elevationSpeed_ -= gravityAcceleration * dt;
     }
 
     if (elevation < 0.0f) {
-      isKicked_ = false;
+      state_ = State::IDLE;
       elevationSpeed_ = 0.0f;
       elevation = 0.0f;
     }
@@ -98,6 +103,10 @@ void Pig::Update(float dt) {
 }
 
 void Pig::Draw() {
+  if (isDead) {
+    return;
+  }
+
   if (elevation > 0) {
     DrawTextureV(shadow_, pos - drawDelta + shadowYOffset, WHITE);
   }
@@ -107,6 +116,5 @@ void Pig::Draw() {
 }
 
 void Pig::Kidnapped() {
-  // TODO: change state
-  TraceLog(LOG_INFO, "AAAAA kidnapped!!!!");
+  state_ = State::KIDNAPPED;
 }

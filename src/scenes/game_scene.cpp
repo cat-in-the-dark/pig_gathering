@@ -146,7 +146,6 @@ void GameScene::Update(float dt) {
     sm->Change("results");
   }
 
-  std::sort(pigs.begin(), pigs.end(), [](auto& p1, auto& p2) { return p1->elevation < p2->elevation; });
   std::sort(players.begin(), players.end(),
             [](const auto& p1, const auto& p2) { return p1->IsDashing() && !p2->IsDashing(); });
 
@@ -176,7 +175,7 @@ void GameScene::Update(float dt) {
     // player - pig collisions
     for (auto& pig : pigs) {
       pig->Update(dt);
-      if (pig->elevation > 0) {
+      if (pig->GetState() != Pig::State::IDLE) {
         continue;
       }
 
@@ -193,7 +192,7 @@ void GameScene::Update(float dt) {
   }
 
   for (auto& pig : pigs) {
-    if (pig->elevation > 0) {
+    if (pig->GetState() != Pig::State::IDLE || pig->isDead) {
       continue;
     }
 
@@ -206,13 +205,20 @@ void GameScene::Update(float dt) {
       pig->pos = nearestPoint + hlam::vec_norm(diff) * pig->size.x / 2;
     }
 
+    // pig - hopper collisions
+    auto hopper = truck.GetHopperRect();
+    if (CheckCollisionCircleRec(pig->pos, pig->size.x / 2, hopper)) {
+      pig->isDead = true;
+      gameState->stats.pigs_gathered++;
+    }
+
     // pig - pig collisions
     for (auto& pig1 : pigs) {
       if (pig == pig1) {
         continue;
       }
 
-      if (pig1->elevation > 0) {
+      if (pig1->GetState() != Pig::State::IDLE || pig1->isDead) {
         continue;
       }
 
@@ -223,29 +229,16 @@ void GameScene::Update(float dt) {
     }
   }
 
-  for (auto I = pigs.begin(); I != pigs.end();) {
-    auto& pig = *I;
-    if (pig->elevation > 0) {
-      I++;
-      continue;
-    }
-
-    // pig - hopper collisions
-    auto hopper = truck.GetHopperRect();
-    if (CheckCollisionCircleRec(pig->pos, pig->size.x / 2, hopper)) {
-      I = pigs.erase(I);
-      gameState->stats.pigs_gathered++;
-    } else {
-      I++;
-    }
-  }
-
   for (auto& wolf : wolfs) {
-    if (wolf->closestPig == nullptr || wolf->closestPig->isKicked()) {
+    if (wolf->closestPig == nullptr || wolf->closestPig->isDead) {
       // TODO: or pig is dead/gathered...
       Pig* closestPig = nullptr;
       float closestPigDist = 100000000;
       for (auto& pig : pigs) {
+        if (pig->GetState() != Pig::State::IDLE || pig->isDead) {
+          continue;
+        }
+
         float dist = hlam::vec_length(wolf->pos - pig->pos);
         if (dist < closestPigDist) {
           closestPigDist = dist;
@@ -257,6 +250,9 @@ void GameScene::Update(float dt) {
 
     wolf->Update(dt);
   }
+
+  pigs.erase(std::remove_if(pigs.begin(), pigs.end(), [](const auto& pig) { return pig->isDead; }), pigs.end());
+  wolfs.erase(std::remove_if(wolfs.begin(), wolfs.end(), [](const auto& wolf) { return wolf->IsDead(); }), wolfs.end());
 }
 void GameScene::Draw() {
   BeginMode2D(camera);
@@ -275,6 +271,7 @@ void GameScene::Draw() {
     player->Draw();
   }
 
+  std::sort(pigs.begin(), pigs.end(), [](auto& p1, auto& p2) { return p1->elevation < p2->elevation; });
   for (auto& pig : pigs) {
     pig->Draw();
   }

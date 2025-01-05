@@ -101,6 +101,10 @@ void Wolf::ChangeState(WolfState stateToChange) {
 }
 
 void Wolf::Update(float dt) {
+  if (closestPig != nullptr && closestPig->isDead) {
+    closestPig = nullptr;
+  }
+
   if (state != nextState) {
     TraceLog(LOG_INFO, "Change Wolf() state from %d to %d", state, nextState);
     if (behaviours.count(state) != 0) {
@@ -118,6 +122,9 @@ void Wolf::Update(float dt) {
 
   if (pos.x >= kWorldPosRight || pos.y >= kWorldPosDown || pos.y <= kWorldPosUp || pos.x <= kWorldPosLeft) {
     die_ = true;
+    if (closestPig != nullptr) {
+      closestPig->isDead = true;
+    }
   }
 }
 
