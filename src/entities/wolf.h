@@ -1,5 +1,6 @@
 #pragma once
 
+#include <HLAM/animations.h>
 #include <HLAM/coroutines.h>
 #include <HLAM/hlam_math.h>
 
@@ -34,6 +35,7 @@ class ChaseWolfBehaviour : public WolfBehaviour {
 
  public:
   ChaseWolfBehaviour(Wolf* wolf);
+  void Activate() override;
   void Update(float dt) override;
 };
 
@@ -53,6 +55,7 @@ class KidnapWolfBehaviour : public WolfBehaviour {
 
  public:
   KidnapWolfBehaviour(Wolf* wolf);
+  void Activate() override;
   void Update(float dt) override;
 };
 
@@ -87,6 +90,11 @@ class Wolf {
   KickState kickState{};
 
   Pig* closestPig;
+  float dirX = 1;
+  hlam::Animation idleAnim;
+  hlam::Animation walkAnim;
+  hlam::Animation chaseAnim;
+  hlam::Animation* currentAnim;
 
   Wolf(hlam::Vec2 pos, hlam::Vec2 size, float speed, float runSpeed);
   virtual ~Wolf();

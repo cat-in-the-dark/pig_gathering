@@ -12,11 +12,15 @@ void WolfBehaviour::Activate() {}
 void WolfBehaviour::Exit() {}
 
 KidnapWolfBehaviour::KidnapWolfBehaviour(Wolf* wolf) : wolf(wolf), target({kWorldPosRight + 64, kWorldPosDown}) {}
+void KidnapWolfBehaviour::Activate() {
+  wolf->currentAnim = &(wolf->walkAnim);
+}
 void KidnapWolfBehaviour::Update(float dt) {
   // stupid wolf ALWAYS run to the same place
   auto dir = target - wolf->pos;
   auto move = hlam::vec_norm(dir) * (wolf->speed * dt);
   wolf->pos += move;
+  wolf->dirX = dir.x > 0 ? 1 : -1;
   if (wolf->closestPig != nullptr && wolf->closestPig->GetState() == Pig::State::KIDNAPPED) {
     if (hlam::vec_dist(wolf->pos, wolf->closestPig->pos) > wolf->size.x / 2 + wolf->closestPig->size.x / 2) {
       wolf->closestPig->Release();
@@ -35,6 +39,7 @@ void IdleWolfBehaviour::Activate() {
   // todo: maybe some random time jitter?
   timer.time = static_cast<float>(GetRandomValue(100, 300)) / 100;
   timer.Reset();
+  wolf->currentAnim = &(wolf->idleAnim);
 }
 void IdleWolfBehaviour::Update(float dt) {
   timer.Update(dt);
@@ -52,6 +57,9 @@ void IdleWolfBehaviour::Update(float dt) {
 }
 
 ChaseWolfBehaviour::ChaseWolfBehaviour(Wolf* wolf) : wolf(wolf) {}
+void ChaseWolfBehaviour::Activate() {
+  wolf->currentAnim = &(wolf->chaseAnim);
+}
 void ChaseWolfBehaviour::Update(float dt) {
   if (wolf->closestPig == nullptr) {
     wolf->ChangeState(IDLE);
@@ -67,10 +75,12 @@ void ChaseWolfBehaviour::Update(float dt) {
 
   // TODO: maybe tired???
   wolf->pos += hlam::vec_norm(dir) * (wolf->runSpeed * dt);
+  wolf->dirX = dir.x > 0 ? 1 : -1;
 }
 
 WanderWolfBehaviour::WanderWolfBehaviour(Wolf* wolf) : wolf(wolf) {}
 void WanderWolfBehaviour::Activate() {
+  wolf->currentAnim = &(wolf->walkAnim);
   // random point around
   float radius = GetRandomValue(kMinWolfWanderDist, kMaxWolfWanderDist);
   float angle = GetRandomValue(0, 360);
@@ -91,6 +101,7 @@ void WanderWolfBehaviour::Update(float dt) {
       wolf->ChangeState(WANDER);
     }
   } else {
+    wolf->dirX = dir.x > 0 ? 1 : -1;
     // TODO: it should be more presice
     wolf->pos += hlam::vec_norm(dir) * (wolf->speed * dt);
   }
@@ -99,6 +110,7 @@ void WanderWolfBehaviour::Update(float dt) {
 KickedWolfBehaviour::KickedWolfBehaviour(Wolf* wolf) : wolf(wolf) {}
 
 void KickedWolfBehaviour::Activate() {
+  wolf->currentAnim = &(wolf->idleAnim);
   PlaySound(wolfKickFX);
 }
 void KickedWolfBehaviour::Update(float dt) {
@@ -124,7 +136,11 @@ Wolf::Wolf(hlam::Vec2 pos, hlam::Vec2 size, float speed, float runSpeed)
       size(size),
       speed(speed),
       runSpeed(runSpeed),
-      closestPig(nullptr) {
+      closestPig(nullptr),
+      idleAnim(wolfIdleFrames, 0.5, true),
+      walkAnim(wolfWalkFrames, 0.5, true),
+      chaseAnim(wolfWalkFrames, 0.2, true),
+      currentAnim(&idleAnim) {
   behaviours.emplace(IDLE, std::make_unique<IdleWolfBehaviour>(this));
   behaviours.emplace(CHASE, std::make_unique<ChaseWolfBehaviour>(this));
   behaviours.emplace(WANDER, std::make_unique<WanderWolfBehaviour>(this));
@@ -149,6 +165,7 @@ void Wolf::DoKick(Kick kick) {
 }
 
 void Wolf::Update(float dt) {
+  currentAnim->Update(dt);
   if (closestPig != nullptr && closestPig->isDead) {
     closestPig = nullptr;
   }
@@ -194,5 +211,10 @@ void Wolf::Draw() {
     DrawTextureV(shadow_, pos - drawDelta + shadowYOffset, WHITE);
   }
 
-  DrawCircleV(drawPos, (size.x + size.y) / 2, RED);
+  // DrawCircleLinesV(drawPos, (size.x + size.y) / 2, RED);
+  auto frame = currentAnim->GetFrame();
+  Rectangle src = {0, 0, static_cast<float>(frame.width) * dirX, static_cast<float>(frame.height)};
+  Rectangle dst = {drawPos.x, drawPos.y, static_cast<float>(frame.width), static_cast<float>(frame.height)};
+  DrawTexturePro(frame, src, dst, Vector2{static_cast<float>(frame.width) / 2, static_cast<float>(frame.height) / 2}, 0,
+                 WHITE);
 }

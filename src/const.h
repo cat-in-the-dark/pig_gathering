@@ -33,7 +33,7 @@ constexpr int kMinWolfWanderDist = 32;
 constexpr int kMaxWolfWanderDist = 32 * 3;
 constexpr float kWolfChaseTriggerDist = 96;
 
-constexpr auto kMaxWolfCount = 3;
+constexpr auto kMaxWolfCount = 10;
 constexpr float kWolfSpawnCooldownTime = 5;
 
 namespace balance {
