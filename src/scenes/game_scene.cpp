@@ -4,6 +4,7 @@
 
 #include <algorithm>
 
+#include "assets.h"
 #include "const.h"
 #include "entities/wolf.h"
 
@@ -104,10 +105,10 @@ void GameScene::Update(float dt) {
   if (players.size() > 0) {
     gameState->stats.time += dt;
     wolfSpawnCooldown.Update(dt);
+    truck.Update(dt);
   }
   ConnectPlayer();
   TrySpawnWolf();
-  truck.Update(dt);
   hlam::Vec2 avgPos{0, 0};
   for (auto& player : players) {
     player->Update(dt);
@@ -357,5 +358,6 @@ void GameScene::TrySpawnWolf() {
 
     TraceLog(LOG_INFO, "SPAWN %f %f", posX, posY);
     wolfs.push_back(std::make_unique<Wolf>(Vec2{posX, posY}, Vec2{16, 16}, kWolfSpeed, kWolfRunSpeed));
+    PlaySound(wolfAwooFX);
   }
 }

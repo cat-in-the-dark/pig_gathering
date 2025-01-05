@@ -35,7 +35,6 @@ void KidnapWolfBehaviour::Update(float dt) {
 IdleWolfBehaviour::IdleWolfBehaviour(Wolf* wolf)
     : wolf(wolf), timer(static_cast<float>(GetRandomValue(100, 300)) / 100) {}
 void IdleWolfBehaviour::Activate() {
-  // Play Awooo
   // todo: maybe some random time jitter?
   timer.time = static_cast<float>(GetRandomValue(100, 300)) / 100;
   timer.Reset();
