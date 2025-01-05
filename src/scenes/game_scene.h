@@ -7,6 +7,7 @@
 #include <HLAM/scene.h>
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "entities/pig.h"
@@ -26,6 +27,7 @@ class GameScene : public hlam::Scene {
   Camera2D camera;
 
   Texture2D grass;
+  void ConnectPlayer();
 
  public:
   GameScene(hlam::SceneManager* sm, GameState* gameState);

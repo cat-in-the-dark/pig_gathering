@@ -20,8 +20,8 @@ GameScene::GameScene(SceneManager* sm, GameState* gameState)
   grass = LoadTextureFromImage(grassImg);
   UnloadImage(grassImg);
 
-  players.push_back(std::make_unique<Player>(0, Vec2{kPlayerSpawnPosX, kPlayerSpawnPosY}, kPlayerSpeed));
-  players.push_back(std::make_unique<Player>(1, Vec2{kPlayerSpawnPosX + 64, kPlayerSpawnPosY}, kPlayerSpeed));
+  // players.push_back(std::make_unique<Player>(0, Vec2{kPlayerSpawnPosX, kPlayerSpawnPosY}, kPlayerSpeed));
+  // players.push_back(std::make_unique<Player>(1, Vec2{kPlayerSpawnPosX + 64, kPlayerSpawnPosY}, kPlayerSpeed));
 
   // DEBUG wolfs
   wolfs.push_back(std::make_unique<Wolf>(Vec2{360, 200}, Vec2{16, 16}, kWolfSpeed, kWolfRunSpeed));
@@ -51,7 +51,55 @@ void GameScene::Activate() {
   camera.zoom = 1;
   pigs = spawnPigs();
 }
+void GameScene::ConnectPlayer() {
+  if (players.size() == 2) {
+    // TODO: right now only for 2 players
+    return;
+  }
+  hlam::Vec2 spawnPos{kPlayerSpawnPosX, kPlayerSpawnPosY};
+  if (players.size() == 1) {
+    spawnPos = players[0]->pos;
+  }
+
+  auto gamepad0 =
+      IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_DOWN) || IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_UP) ||
+      IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_LEFT) || IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT) ||
+      IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_UP) ||
+      IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) || IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT);
+
+  auto gamepad1 =
+      IsGamepadButtonDown(1, GAMEPAD_BUTTON_LEFT_FACE_DOWN) || IsGamepadButtonDown(1, GAMEPAD_BUTTON_LEFT_FACE_UP) ||
+      IsGamepadButtonDown(1, GAMEPAD_BUTTON_LEFT_FACE_LEFT) || IsGamepadButtonDown(1, GAMEPAD_BUTTON_LEFT_FACE_RIGHT) ||
+      IsGamepadButtonDown(1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsGamepadButtonDown(1, GAMEPAD_BUTTON_RIGHT_FACE_UP) ||
+      IsGamepadButtonDown(1, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) || IsGamepadButtonDown(1, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT);
+
+  auto keyboard0 = IsKeyPressed(KEY_W) || IsKeyPressed(KEY_A) || IsKeyPressed(KEY_S) || IsKeyPressed(KEY_D) ||
+                   IsKeyPressed(KEY_SPACE);
+  auto keyboard1 = IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_RIGHT) ||
+                   IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_RIGHT_SHIFT);
+
+  if (keyboard0 || gamepad0) {
+    for (auto& player : players) {
+      // TODO: it must be hashmap but it requires other code to be rewritten...
+      if (player->index == 0) {
+        return;
+      }
+    }
+    players.push_back(std::make_unique<Player>(0, spawnPos, kPlayerSpeed));
+  }
+  if (keyboard1 || gamepad1) {
+    for (auto& player : players) {
+      // TODO: it must be hashmap but it requires other code to be rewritten...
+      if (player->index == 1) {
+        return;
+      }
+    }
+    players.push_back(std::make_unique<Player>(1, spawnPos, kPlayerSpeed));
+  }
+}
+
 void GameScene::Update(float dt) {
+  ConnectPlayer();
   truck.Update(dt);
   gameState->stats.time += dt;
   hlam::Vec2 avgPos{0, 0};
