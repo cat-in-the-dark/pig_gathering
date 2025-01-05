@@ -3,6 +3,7 @@
 #include <raylib.h>
 
 // raylib must be before
+#include <HLAM/coroutines.h>
 #include <HLAM/hlam_math.h>
 #include <HLAM/scene.h>
 
@@ -25,9 +26,11 @@ class GameScene : public hlam::Scene {
   std::vector<std::unique_ptr<Wolf>> wolfs;
   Truck truck;
   Camera2D camera;
+  hlam::Cooldown wolfSpawnCooldown{kWolfSpawnCooldownTime};
 
   Texture2D grass;
   void ConnectPlayer();
+  void TrySpawnWolf();
 
  public:
   GameScene(hlam::SceneManager* sm, GameState* gameState);

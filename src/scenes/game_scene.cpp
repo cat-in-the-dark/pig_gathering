@@ -24,7 +24,7 @@ GameScene::GameScene(SceneManager* sm, GameState* gameState)
   // players.push_back(std::make_unique<Player>(1, Vec2{kPlayerSpawnPosX + 64, kPlayerSpawnPosY}, kPlayerSpeed));
 
   // DEBUG wolfs
-  wolfs.push_back(std::make_unique<Wolf>(Vec2{360, 200}, Vec2{16, 16}, kWolfSpeed, kWolfRunSpeed));
+  // wolfs.push_back(std::make_unique<Wolf>(Vec2{360, 200}, Vec2{16, 16}, kWolfSpeed, kWolfRunSpeed));
 }
 GameScene::~GameScene() {
   UnloadTexture(grass);
@@ -101,8 +101,10 @@ void GameScene::ConnectPlayer() {
 void GameScene::Update(float dt) {
   if (players.size() > 0) {
     gameState->stats.time += dt;
+    wolfSpawnCooldown.Update(dt);
   }
   ConnectPlayer();
+  TrySpawnWolf();
   truck.Update(dt);
   hlam::Vec2 avgPos{0, 0};
   for (auto& player : players) {
@@ -286,3 +288,19 @@ void GameScene::Draw() {
   EndMode2D();
 }
 void GameScene::Exit() {}
+
+void GameScene::TrySpawnWolf() {
+  if (wolfs.size() >= kMaxWolfCount) {
+    return;
+  }
+  if (wolfSpawnCooldown.Invoke()) {
+    float posX = GetRandomValue(kWorldPosLeft + 128, kWorldPosRight - 128);
+    float posY = kWorldPosUp + 2;
+    if (GetRandomValue(0, 1) == 1) {
+      posY = kWorldPosDown - 2;
+    }
+
+    TraceLog(LOG_INFO, "SPAWN %f %f", posX, posY);
+    wolfs.push_back(std::make_unique<Wolf>(Vec2{posX, posY}, Vec2{16, 16}, kWolfSpeed, kWolfRunSpeed));
+  }
+}
