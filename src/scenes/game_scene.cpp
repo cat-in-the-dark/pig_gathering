@@ -43,7 +43,7 @@ auto spawnPigs() {
 }
 
 void GameScene::Activate() {
-  truck = {Vec2{kTruckPosX, kTruckPosY}, {64, 32}, {kTruckSpeedX, kTruckSpeedY}};
+  truck = {Vec2{kTruckPosX, kTruckPosY}, Truck::kTruck2Size, {kTruckSpeedX, kTruckSpeedY}};
   gameState->stats = {};
   camera.offset = {kCanvasWidth / 2, kCanvasHeight / 2};
   camera.target = {0, 0};

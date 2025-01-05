@@ -2,6 +2,7 @@
 #include <rlgl.h>
 #include <stdlib.h>
 
+#include "assets.h"
 #include "const.h"
 #include "scenes/game_scene.h"
 #include "scenes/results_scene.h"
@@ -17,6 +18,9 @@
 
 #define HLAM_MATH_IMPLEMENTATION
 #include <HLAM/hlam_math.h>
+
+#define HLAM_ANIMATIONS_IMPLEMENTATION
+#include <HLAM/animations.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -78,6 +82,8 @@ int main() {
   InitWindow(kWindowWidth, kWindowHeight, "Game");
   canvas = LoadRenderTexture(viewport.canvas_width, viewport.canvas_height);
   SetTextureFilter(canvas.texture, TEXTURE_FILTER_POINT);
+
+  LoadAssets();
 
   SceneManager sm{};
   GameState gameState{};
