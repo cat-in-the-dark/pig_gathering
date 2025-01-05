@@ -78,6 +78,6 @@ void Player::UpdateControls(float dt) {
 void Player::KickedPig() {
   dashAnim.Finish();
   if (IsGamepadAvailable(index)) {
-    SetGamepadVibration(index, 0.5, 0.5, 0.2);
+    SetGamepadVibration(index, 0.5f, 0.5f, 0.2f);
   }
 }
