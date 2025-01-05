@@ -1,43 +1,31 @@
 #ifndef HLAM_ANIMATIONS_H
 #define HLAM_ANIMATIONS_H
 
+#include <raylib.h>
+
 #include <vector>
 
 namespace hlam {
-#ifndef RAYLIB_H
-struct Tex {
-  unsigned int id;
-  int width;
-  int height;
-  int mipmaps;
-  int format;
-};
-#else
-// use raylib's Texture in hlam namespace
-struct Tex : public ::Texture {
-  Tex(::Texture&& tex) : ::Texture(std::move(tex)) {}
-};
-#endif
 
 class Animation {
  public:
-  explicit Animation(std::vector<Tex>&& frames, float frameDuration, bool looping);
-  explicit Animation(std::vector<Tex>&& frames, float frameDuration);
+  explicit Animation(std::vector<Texture> frames, float frameDuration, bool looping);
+  explicit Animation(std::vector<Texture> frames, float frameDuration);
 
   void Update(float dt);
 
   void Reset();
 
-  const Tex& GetFrame() const;
+  const Texture& GetFrame() const;
 
-  std::vector<Tex> frames;
+  std::vector<Texture> frames;
   float frameDuration;
   bool looping;
   bool finished;
 
  private:
-  int currentFrameIdx;
   float time;
+  std::size_t currentFrameIdx;
 };
 }  // namespace hlam
 
@@ -46,18 +34,12 @@ class Animation {
 #ifdef HLAM_ANIMATIONS_IMPLEMENTATION
 
 namespace hlam {
-inline Animation::Animation(std::vector<Tex>&& frames, float frameDuration, bool looping)
-    : frames(std::move(frames)),
-      frameDuration(frameDuration),
-      looping(looping),
-      finished(false),
-      time(0),
-      currentFrameIdx(0) {}
+Animation::Animation(std::vector<Texture> frames, float frameDuration, bool looping)
+    : frames(frames), frameDuration(frameDuration), looping(looping), finished(false), time(0), currentFrameIdx(0) {}
 
-inline Animation::Animation(std::vector<Tex>&& frames, float frameDuration)
-    : Animation(std::move(frames), frameDuration, false) {}
+Animation::Animation(std::vector<Texture> frames, float frameDuration) : Animation(frames, frameDuration, false) {}
 
-inline void Animation::Update(float dt) {
+void Animation::Update(float dt) {
   if (finished) {
     return;
   }
@@ -77,13 +59,13 @@ inline void Animation::Update(float dt) {
   }
 }
 
-inline void Animation::Reset() {
+void Animation::Reset() {
   time = 0.0f;
   currentFrameIdx = 0;
   finished = false;
 }
 
-inline const Tex& Animation::GetFrame() const {
+const Texture& Animation::GetFrame() const {
   // I prefer std::out_of_range() more than segfault
   return frames.at(currentFrameIdx);
 }
