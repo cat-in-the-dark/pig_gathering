@@ -137,9 +137,9 @@ Wolf::Wolf(hlam::Vec2 pos, hlam::Vec2 size, float speed, float runSpeed)
       speed(speed),
       runSpeed(runSpeed),
       closestPig(nullptr),
-      idleAnim(wolfIdleFrames, 0.5, true),
-      walkAnim(wolfWalkFrames, 0.5, true),
-      chaseAnim(wolfWalkFrames, 0.2, true),
+      idleAnim(wolfIdleFrames, 0.5f, true),
+      walkAnim(wolfWalkFrames, 0.5f, true),
+      chaseAnim(wolfWalkFrames, 0.2f, true),
       currentAnim(&idleAnim) {
   behaviours.emplace(IDLE, std::make_unique<IdleWolfBehaviour>(this));
   behaviours.emplace(CHASE, std::make_unique<ChaseWolfBehaviour>(this));
