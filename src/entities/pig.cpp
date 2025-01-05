@@ -5,6 +5,7 @@
 
 #include <algorithm>
 
+#include "assets.h"
 #include "const.h"
 #include "helpers/texture_helper.h"
 
@@ -13,9 +14,13 @@ Pig::Pig(hlam::Vec2 pos)
       speed{0, 0},
       elevation(0),
       isDead(false),
+      anim(pigIdleFrames, 1.0f, true),
       elevationSpeed_(0.0f),
       state_(State::IDLE),
-      shadow_(generateShadow(Pig::pigWitdh / 2.0f)) {}
+      shadow_(generateShadow(Pig::pigWitdh / 2.0f)) {
+  // do desync pigs
+  anim.time = GetRandomValue(0, 60) / 60.0f;
+}
 
 Pig::~Pig() {
   UnloadTexture(shadow_);
@@ -34,8 +39,11 @@ void Pig::Update(float dt) {
     return;
   }
 
+  anim.Update(dt);
+
   dt *= 3;
   if (state_ == State::KICKED) {
+    rotation += rotationSpeed * dt;
     if (elevation >= 0.0f) {
       elevation += elevationSpeed_ * dt;
       elevationSpeed_ -= physics::gravityAcceleration * dt;
@@ -43,6 +51,7 @@ void Pig::Update(float dt) {
 
     if (elevation < 0.0f) {
       state_ = State::IDLE;
+      rotation = 0.0f;
       elevationSpeed_ = 0.0f;
       elevation = 0.0f;
     }
@@ -89,8 +98,19 @@ void Pig::Draw() {
     DrawTextureV(shadow_, pos - drawDelta + shadowYOffset, WHITE);
   }
 
-  DrawEllipse(pos.x, pos.y - elevation * 50, size.x / 2, size.y / 2, BLACK);
-  DrawEllipseLines(pos.x, pos.y - elevation * 50, size.y / 2, size.x / 2, WHITE);
+  auto elevationOffset = hlam::Vec2{0.0f, elevation * 50};
+  auto drawPos = pos - elevationOffset;
+  auto texture = anim.GetFrame();
+
+  if (state_ == State::KICKED) {
+    texture = pigDamagedFrame;
+  }
+
+  Rectangle source = {0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height)};
+  Rectangle dest = {drawPos.x, drawPos.y, static_cast<float>(texture.width), static_cast<float>(texture.height)};
+  hlam::Vec2 origin = {texture.width / 2.0f, texture.height / 2.0f};
+
+  DrawTexturePro(texture, source, dest, origin, rotation * 180 / PI, WHITE);
 }
 
 void Pig::Kidnapped() {

@@ -1,6 +1,8 @@
 #ifndef PIG_H
 #define PIG_H
 
+#include <HLAM/animations.h>
+
 #include "entity.h"
 #include "kick.h"
 
@@ -8,6 +10,7 @@ class Pig : public Entity {
  public:
   enum class State { IDLE, KICKED, KIDNAPPED };
 
+  static constexpr auto rotationSpeed = 2 * PI / 3.0f;
   static constexpr auto pigWitdh = 24.0f;
   static constexpr auto pigHeight = 24.0f;
   static constexpr hlam::Vec2 pigSize = {pigWitdh, pigHeight};
@@ -16,6 +19,8 @@ class Pig : public Entity {
   hlam::Vec2 speed;
   float elevation;
   bool isDead;
+  hlam::Animation anim;
+  float rotation = 0.0f;
 
   explicit Pig(hlam::Vec2 pos);
 

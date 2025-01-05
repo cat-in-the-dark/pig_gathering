@@ -22,9 +22,9 @@ class Animation {
   float frameDuration;
   bool looping;
   bool finished;
+  float time;
 
  private:
-  float time;
   std::size_t currentFrameIdx;
 };
 }  // namespace hlam
