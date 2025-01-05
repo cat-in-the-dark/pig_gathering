@@ -37,8 +37,8 @@ Pig::Pig(hlam::Vec2 pos)
     : Entity(pos, pigSize),
       speed{0, 0},
       elevation(0),
-      elevationSpeed_(0.0f),
       isDead(false),
+      elevationSpeed_(0.0f),
       state_(State::IDLE),
       shadow_(generateShadow()) {}
 
