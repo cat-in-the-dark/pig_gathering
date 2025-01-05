@@ -6,10 +6,9 @@
 class Entity {
  public:
   hlam::Vec2 pos;
-  int width;
-  int height;
+  hlam::Vec2 size;
 
-  Entity(hlam::Vec2 pos, int width, int height);
+  Entity(hlam::Vec2 pos, hlam::Vec2 size);
   virtual void Update(float dt) = 0;
   virtual void Draw() = 0;
   virtual ~Entity();

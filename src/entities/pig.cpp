@@ -34,7 +34,7 @@ Texture generateShadow() {
 }
 
 Pig::Pig(hlam::Vec2 pos)
-    : Entity(pos, pigWitdh, pigHeight),
+    : Entity(pos, pigSize),
       speed{0, 0},
       elevation(0),
       elevationSpeed_(0.0f),
@@ -102,8 +102,8 @@ void Pig::Draw() {
     DrawTextureV(shadow_, pos - drawDelta + shadowYOffset, WHITE);
   }
 
-  DrawEllipse(pos.x, pos.y - elevation * 50, width / 2, height / 2, BLACK);
-  DrawEllipseLines(pos.x, pos.y - elevation * 50, width / 2, height / 2, WHITE);
+  DrawEllipse(pos.x, pos.y - elevation * 50, size.x / 2, size.y / 2, BLACK);
+  DrawEllipseLines(pos.x, pos.y - elevation * 50, size.y / 2, size.x / 2, WHITE);
 }
 
 void Pig::Kidnapped() {

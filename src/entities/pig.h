@@ -12,10 +12,10 @@ struct Kick {
 
 class Pig : public Entity {
  public:
-  static constexpr auto pigWitdh = 24;
-  static constexpr auto pigHeight = 24;
-
-  static constexpr hlam::Vec2 drawDelta = {pigWitdh / 2, pigHeight / 2};
+  static constexpr auto pigWitdh = 24.0f;
+  static constexpr auto pigHeight = 24.0f;
+  static constexpr hlam::Vec2 pigSize = {pigWitdh, pigHeight};
+  static constexpr hlam::Vec2 drawDelta = pigSize / 2.0f;
 
   hlam::Vec2 speed;
   float elevation;

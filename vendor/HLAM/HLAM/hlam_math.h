@@ -35,10 +35,10 @@ inline Vec2 operator-(Vec2 a) { return {-a.x, -a.y}; }
 inline Vec2 operator+(Vec2 a, Vec2 b) { return {a.x + b.x, a.y + b.y}; }
 inline Vec2 operator-(Vec2 a, Vec2 b) { return {a.x - b.x, a.y - b.y}; }
 
-inline Vec2 operator*(Vec2 a, float scalar) { return {a.x * scalar, a.y * scalar}; }
+inline constexpr Vec2 operator*(Vec2 a, float scalar) { return {a.x * scalar, a.y * scalar}; }
 inline Vec2 operator*(float scalar, Vec2 a) { return operator*(a, scalar); }
 
-inline Vec2 operator/(Vec2 a, float scalar) { return operator*(a, 1.0f / scalar); }
+inline constexpr Vec2 operator/(Vec2 a, float scalar) { return operator*(a, 1.0f / scalar); }
 
 /* Hadamard Product */
 inline Vec2 operator*(Vec2 a, Vec2 b) { return {a.x * b.x, a.y * b.y}; }

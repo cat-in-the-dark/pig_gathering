@@ -104,13 +104,13 @@ void GameScene::Update(float dt) {
         continue;
       }
 
-      if (CheckCollisionCircles(pig->pos, pig->width / 2, player->pos, Player::physSize.x / 2)) {
+      if (CheckCollisionCircles(pig->pos, pig->size.x / 2, player->pos, Player::physSize.x / 2)) {
         auto diff = pig->pos - player->pos;
         if (player->IsDashing()) {
           pig->DoKick({hlam::vec_norm(diff), balance::kickPower});
           player->dashAnim.Finish();
         } else {
-          pig->pos = player->pos + hlam::vec_norm(diff) * (pig->width / 2 + Player::physSize.x / 2);
+          pig->pos = player->pos + hlam::vec_norm(diff) * (pig->size.x / 2 + Player::physSize.x / 2);
         }
       }
     }
@@ -124,7 +124,7 @@ void GameScene::Update(float dt) {
     }
 
     // pig - truck collisions
-    if (CheckCollisionCircleRec(pig->pos, pig->width / 2, {truck.pos.x, truck.pos.y, truck.size.x, truck.size.y})) {
+    if (CheckCollisionCircleRec(pig->pos, pig->size.x / 2, {truck.pos.x, truck.pos.y, truck.size.x, truck.size.y})) {
       I = pigs.erase(I);
       gameState->stats.pigs_gathered++;
     } else {
@@ -137,8 +137,7 @@ void GameScene::Update(float dt) {
       continue;
     }
 
-    pig->pos = hlam::fit_in_bounds(pig->pos, {static_cast<float>(pig->width), static_cast<float>(pig->height)},
-                                   {kWorldPosLeft, kWorldPosUp, kWorldPosRight, kWorldPosDown});
+    pig->pos = hlam::fit_in_bounds(pig->pos, pig->size, {kWorldPosLeft, kWorldPosUp, kWorldPosRight, kWorldPosDown});
 
     // pig - truck collisions
     auto truck_center_pos = truck.pos + truck.size / 2;
@@ -158,9 +157,9 @@ void GameScene::Update(float dt) {
         continue;
       }
 
-      if (CheckCollisionCircles(pig->pos, pig->width / 2, pig1->pos, pig1->width / 2)) {
+      if (CheckCollisionCircles(pig->pos, pig->size.x / 2, pig1->pos, pig1->size.x / 2)) {
         auto diff = pig1->pos - pig->pos;
-        pig1->pos = pig->pos + hlam::vec_norm(diff) * (pig->width);
+        pig1->pos = pig->pos + hlam::vec_norm(diff) * (pig->size.x);
       }
     }
   }
