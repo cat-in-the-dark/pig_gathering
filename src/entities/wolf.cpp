@@ -168,8 +168,11 @@ void Wolf::Update(float dt) {
     if (state != KICKED) {
       die_ = true;
     }
-    if (closestPig != nullptr) {
-      closestPig->isDead = true;
+
+    if (state == KIDNAPPING) {
+      if (closestPig != nullptr) {
+        closestPig->isDead = true;
+      }
     }
   }
 }
