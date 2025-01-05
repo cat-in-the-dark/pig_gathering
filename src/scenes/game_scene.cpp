@@ -290,8 +290,29 @@ void GameScene::Update(float dt) {
     wolf->Update(dt);
   }
 
+  auto wolves_kicked = 0;
+  auto pigs_stolen = 0;
+  wolfs.erase(std::remove_if(wolfs.begin(), wolfs.end(),
+                             [&pigs_stolen, &wolves_kicked](const auto& wolf) {
+                               if (wolf->IsDead()) {
+                                 if (wolf->GetState() == KIDNAPPING) {
+                                   if (wolf->closestPig != nullptr) {
+                                     pigs_stolen++;
+                                   }
+                                 } else {
+                                   wolves_kicked++;
+                                 }
+                               }
+                               return wolf->IsDead();
+                             }),
+              wolfs.end());
+  gameState->stats.pigs_stolen += pigs_stolen;
+  gameState->stats.wolves_kicked += wolves_kicked;
+
   pigs.erase(std::remove_if(pigs.begin(), pigs.end(), [](const auto& pig) { return pig->isDead; }), pigs.end());
-  wolfs.erase(std::remove_if(wolfs.begin(), wolfs.end(), [](const auto& wolf) { return wolf->IsDead(); }), wolfs.end());
+  if (pigs.empty()) {
+    sm->Change("results");
+  }
 }
 void GameScene::Draw() {
   BeginMode2D(camera);
