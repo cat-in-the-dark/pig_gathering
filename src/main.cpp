@@ -43,6 +43,11 @@ void update(void* arg) {
 
   float dt = GetFrameTime();
   auto sm = reinterpret_cast<SceneManager*>(arg);
+
+  if (IsKeyPressed(KEY_R)) {
+    sm->Change("results");
+  }
+
   // TODO: use pattern https://gameprogrammingpatterns.com/game-loop.html
   sm->Update(dt);
 
